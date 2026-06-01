@@ -1,0 +1,40 @@
+---
+import '../styles/global.css';
+
+import { siteConfig, type Locale } from '../config/site';
+import { dictionaries } from '../i18n/dictionaries';
+
+interface Props {
+  locale: Locale;
+  pageTitle?: string;
+}
+
+const { locale, pageTitle } = Astro.props;
+const dictionary = dictionaries[locale];
+const title = pageTitle ? `${pageTitle} | ${siteConfig.title}` : siteConfig.title;
+---
+
+<html lang={locale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={siteConfig.description} />
+    <title>{title}</title>
+  </head>
+  <body class="min-h-screen bg-white text-zinc-900 antialiased">
+    <div class="mx-auto flex min-h-screen max-w-4xl flex-col px-6 py-8">
+      <header class="border-b border-zinc-200 pb-4">
+        <div class="flex items-center justify-between gap-4">
+          <a class="text-lg font-semibold tracking-tight" href={`/${locale}/`}>{siteConfig.title}</a>
+          <nav aria-label="Main Navigation">
+            <a class="text-sm text-zinc-700 underline-offset-4 hover:underline" href={`/${locale}/`}>{dictionary.home}</a>
+          </nav>
+        </div>
+      </header>
+      <main class="flex-1 py-10">
+        <slot />
+      </main>
+      <footer class="border-t border-zinc-200 pt-4 text-sm text-zinc-600">{dictionary.footer}</footer>
+    </div>
+  </body>
+</html>

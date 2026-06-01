@@ -1,0 +1,22 @@
+---
+import SiteShell from '../../layouts/SiteShell.astro';
+import { locales, type Locale } from '../../config/site';
+import { dictionaries } from '../../i18n/dictionaries';
+
+export function getStaticPaths() {
+  return locales.map((locale) => ({ params: { locale } }));
+}
+
+const locale = Astro.params.locale as Locale;
+const dictionary = dictionaries[locale];
+---
+
+<SiteShell locale={locale} pageTitle={dictionary.home}>
+  <section class="space-y-4">
+    <p class="text-sm font-medium uppercase tracking-[0.2em] text-zinc-500">{dictionary.home}</p>
+    <h1 class="text-4xl font-semibold tracking-tight text-zinc-950">{dictionary.intro}</h1>
+    <p class="max-w-2xl text-base leading-7 text-zinc-700">
+      {dictionary.footer}
+    </p>
+  </section>
+</SiteShell>
