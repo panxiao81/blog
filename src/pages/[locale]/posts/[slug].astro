@@ -1,0 +1,33 @@
+---
+import { render } from 'astro:content';
+
+import type { Locale } from '../../../config/site';
+import { getPostRouteEntries, type PostRouteEntry } from '../../../content/posts';
+import SiteShell from '../../../layouts/SiteShell.astro';
+
+export async function getStaticPaths() {
+  const posts = await getPostRouteEntries();
+
+  return posts.map(({ entry, locale, slug }: PostRouteEntry) => ({
+    params: { locale, slug },
+    props: { post: entry, locale },
+  }));
+}
+
+const { post, locale } = Astro.props as { post: PostRouteEntry['entry']; locale: Locale };
+const { Content } = await render(post);
+const publishedDate = post.data.date.toISOString().slice(0, 10);
+---
+
+<SiteShell locale={locale} pageTitle={post.data.title}>
+  <article class="space-y-6">
+    <header class="space-y-2">
+      <p class="text-sm font-medium uppercase tracking-[0.2em] text-zinc-500">Post</p>
+      <h1 class="text-4xl font-semibold tracking-tight text-zinc-950">{post.data.title}</h1>
+      <time class="text-sm text-zinc-600" datetime={publishedDate}>{publishedDate}</time>
+    </header>
+    <div class="max-w-2xl space-y-4 text-base leading-7 text-zinc-700">
+      <Content />
+    </div>
+  </article>
+</SiteShell>
