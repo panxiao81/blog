@@ -2,6 +2,9 @@ import type { Locale } from '../config/site';
 
 export type SiteDictionary = {
   home: string;
+  about: string;
+  links: string;
+  privacy: string;
   intro: string;
   footer: string;
   themeLabel: string;
@@ -16,6 +19,9 @@ export type SiteDictionary = {
 export const dictionaries: Record<Locale, SiteDictionary> = {
   en: {
     home: 'Home',
+    about: 'About',
+    links: 'Links',
+    privacy: 'Privacy',
     intro: 'Essays, notes, and selected work.',
     footer: 'Writing across locales.',
     themeLabel: 'Theme',
@@ -28,6 +34,9 @@ export const dictionaries: Record<Locale, SiteDictionary> = {
   },
   zh: {
     home: '首页',
+    about: '关于',
+    links: '链接',
+    privacy: '隐私',
     intro: '这里发布文章、笔记与作品。',
     footer: '跨语言写作。',
     themeLabel: '主题',
@@ -40,6 +49,9 @@ export const dictionaries: Record<Locale, SiteDictionary> = {
   },
   ja: {
     home: 'ホーム',
+    about: 'このサイトについて',
+    links: 'リンク',
+    privacy: 'プライバシー',
     intro: 'エッセイ、ノート、作品を掲載します。',
     footer: '複数ロケールで書くサイトです。',
     themeLabel: 'テーマ',

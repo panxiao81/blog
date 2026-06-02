@@ -1,0 +1,31 @@
+---
+import type { MarkdownInstance } from 'astro';
+
+import SiteShell from '../../layouts/SiteShell.astro';
+import { locales, type Locale } from '../../config/site';
+
+type MarkdownPageModule = MarkdownInstance<{
+  title: string;
+}>;
+
+export function getStaticPaths() {
+  return locales.map((locale) => ({ params: { locale } }));
+}
+
+const locale = Astro.params.locale as Locale;
+const pageModules = import.meta.glob('../../content/pages/links/*.md');
+const loadPage = pageModules[`../../content/pages/links/${locale}.md`];
+
+if (!loadPage) {
+  throw new Error(`Missing Links page for locale: ${locale}`);
+}
+
+const page = await loadPage() as MarkdownPageModule;
+const { Content, frontmatter } = page;
+---
+
+<SiteShell locale={locale} pageTitle={frontmatter.title}>
+  <article class="prose prose-zinc max-w-none">
+    <Content />
+  </article>
+</SiteShell>
