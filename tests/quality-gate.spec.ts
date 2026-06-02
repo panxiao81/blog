@@ -1,0 +1,27 @@
+import { execFileSync } from 'node:child_process';
+import { existsSync, readFileSync } from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+import { expect, test } from 'vitest';
+
+const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+
+test('npm run lint exits successfully on the current codebase', () => {
+  const pkg = JSON.parse(readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
+  expect(pkg.scripts?.lint).toBeTruthy();
+
+  expect(() =>
+    execFileSync(npmCommand, ['run', 'lint'], {
+      cwd: repoRoot,
+      env: { ...process.env, CI: '1' },
+      stdio: 'pipe',
+    })
+  ).not.toThrow();
+});
+
+test('a CI workflow file exists', () => {
+  const ciPath = path.join(repoRoot, '.github', 'workflows', 'ci.yml');
+  expect(existsSync(ciPath)).toBe(true);
+});

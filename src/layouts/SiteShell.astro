@@ -23,9 +23,13 @@ const themeStorageKey = themePreferenceStorageKey;
     <title>{title}</title>
     <script data-theme-init is:inline define:vars={{ themeStorageKey }}>
       (function () {
-        var stored = null;
-        try { stored = localStorage.getItem(themeStorageKey); } catch (_) {}
-        var isDark = stored === 'dark' ||
+        let stored;
+        try {
+          stored = localStorage.getItem(themeStorageKey);
+        } catch {
+          stored = null;
+        }
+        const isDark = stored === 'dark' ||
           (stored !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
         document.documentElement.classList.toggle('dark', isDark);
       })();
@@ -106,11 +110,11 @@ const themeStorageKey = themePreferenceStorageKey;
     </div>
     <script data-search-toggle is:inline>
       (function () {
-        var toggle = document.querySelector('[data-search="mobile-toggle"]');
-        var panel = document.querySelector('#mobile-search');
+        const toggle = document.querySelector('[data-search="mobile-toggle"]');
+        const panel = document.querySelector('#mobile-search');
         if (!toggle || !panel) return;
         toggle.addEventListener('click', function () {
-          var expanded = toggle.getAttribute('aria-expanded') === 'true';
+          const expanded = toggle.getAttribute('aria-expanded') === 'true';
           panel.hidden = expanded;
           toggle.setAttribute('aria-expanded', expanded ? 'false' : 'true');
         });
@@ -119,7 +123,7 @@ const themeStorageKey = themePreferenceStorageKey;
     <script data-theme-interact is:inline define:vars={{ themeStorageKey }}>
       (function () {
         function applyTheme(value) {
-          var isDark = value === 'dark' ||
+          const isDark = value === 'dark' ||
             (value !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
           document.documentElement.classList.toggle('dark', isDark);
           document.querySelectorAll('[data-theme]').forEach(function (btn) {
@@ -127,14 +131,22 @@ const themeStorageKey = themePreferenceStorageKey;
           });
         }
 
-        var stored = null;
-        try { stored = localStorage.getItem(themeStorageKey); } catch (_) {}
+        let stored;
+        try {
+          stored = localStorage.getItem(themeStorageKey);
+        } catch {
+          stored = null;
+        }
         applyTheme(stored || 'system');
 
         document.querySelectorAll('[data-theme]').forEach(function (btn) {
           btn.addEventListener('click', function () {
-            var theme = btn.getAttribute('data-theme');
-            try { localStorage.setItem(themeStorageKey, theme); } catch (_) {}
+            const theme = btn.getAttribute('data-theme');
+            try {
+              localStorage.setItem(themeStorageKey, theme);
+            } catch {
+              // Ignore storage failures and still apply the theme for this page load.
+            }
             applyTheme(theme);
           });
         });

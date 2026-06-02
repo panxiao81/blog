@@ -74,7 +74,7 @@ function runThemeInteractionScript(script: string, options: {
     },
     document: {
       documentElement: { classList },
-      querySelectorAll: (_: string) => ({
+      querySelectorAll: () => ({
         forEach: (fn: (el: unknown) => void) => {
           buttons.forEach((btn) => {
             fn({
@@ -82,7 +82,8 @@ function runThemeInteractionScript(script: string, options: {
               setAttribute: (attr: string, value: string) => {
                 if (attr === 'aria-pressed') btn.ariaPressedValue = value;
               },
-              addEventListener: (_evt: string, handler: () => void) => {
+              addEventListener: (...args: [string, () => void]) => {
+                const handler = args[1];
                 btn.clickHandler = handler;
               },
             });
