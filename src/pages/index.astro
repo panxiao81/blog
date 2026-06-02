@@ -1,0 +1,56 @@
+---
+import { defaultLocale, localePreferenceStorageKey, locales } from '../config/site';
+
+const fallbackPath = `/${defaultLocale}/`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Redirecting…</title>
+    <script is:inline define:vars={{ supportedLocales: locales, storageKey: localePreferenceStorageKey, fallbackLocale: defaultLocale }}>
+      function normalizeLocale(value) {
+        if (typeof value !== 'string') {
+          return null;
+        }
+
+        const [language] = value.toLowerCase().split('-');
+        return supportedLocales.includes(language) ? language : null;
+      }
+
+      function readStoredLocale() {
+        try {
+          return normalizeLocale(localStorage.getItem(storageKey));
+        } catch {
+          return null;
+        }
+      }
+
+      function readBrowserLocale() {
+        const browserLocales = Array.isArray(navigator.languages) && navigator.languages.length > 0
+          ? navigator.languages
+          : [navigator.language];
+
+        for (const locale of browserLocales) {
+          const normalized = normalizeLocale(locale);
+          if (normalized) {
+            return normalized;
+          }
+        }
+
+        return null;
+      }
+
+      const targetLocale = readStoredLocale() ?? readBrowserLocale() ?? fallbackLocale;
+      location.replace(`/${targetLocale}/`);
+    </script>
+  </head>
+  <body>
+    <noscript>
+      <meta http-equiv="refresh" content={`0;url=${fallbackPath}`} />
+      <p><a href={fallbackPath}>Continue to {fallbackPath}</a></p>
+    </noscript>
+  </body>
+</html>

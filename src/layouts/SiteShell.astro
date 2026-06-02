@@ -1,7 +1,7 @@
 ---
 import '../styles/global.css';
 
-import { siteConfig, type Locale } from '../config/site';
+import { siteConfig, siteUrl, locales, localeLabels, themePreferenceStorageKey, type Locale } from '../config/site';
 import { dictionaries } from '../i18n/dictionaries';
 
 interface Props {
@@ -12,6 +12,7 @@ interface Props {
 const { locale, pageTitle } = Astro.props;
 const dictionary = dictionaries[locale];
 const title = pageTitle ? `${pageTitle} | ${siteConfig.title}` : siteConfig.title;
+const themeStorageKey = themePreferenceStorageKey;
 ---
 
 <html lang={locale}>
@@ -20,6 +21,15 @@ const title = pageTitle ? `${pageTitle} | ${siteConfig.title}` : siteConfig.titl
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={siteConfig.description} />
     <title>{title}</title>
+    <script data-theme-init is:inline define:vars={{ themeStorageKey }}>
+      (function () {
+        var stored = null;
+        try { stored = localStorage.getItem(themeStorageKey); } catch (_) {}
+        var isDark = stored === 'dark' ||
+          (stored !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.classList.toggle('dark', isDark);
+      })();
+    </script>
   </head>
   <body class="min-h-screen bg-white text-zinc-900 antialiased">
     <div class="mx-auto flex min-h-screen max-w-4xl flex-col px-6 py-8">
@@ -29,6 +39,46 @@ const title = pageTitle ? `${pageTitle} | ${siteConfig.title}` : siteConfig.titl
           <nav aria-label="Main Navigation">
             <a class="text-sm text-zinc-700 underline-offset-4 hover:underline" href={`/${locale}/`}>{dictionary.home}</a>
           </nav>
+          <nav aria-label="Language" class="flex items-center gap-2 text-sm">
+            {locales.map((l) =>
+              l === locale
+                ? <span aria-current="page" class="font-semibold text-zinc-900">{localeLabels[l]}</span>
+                : <a href={`/${l}/`} class="text-zinc-500 underline-offset-4 hover:underline">{localeLabels[l]}</a>
+            )}
+          </nav>
+          <nav aria-label="Theme" class="flex items-center gap-1 text-sm">
+            <button type="button" data-theme="light" class="px-2 py-1 text-zinc-500 hover:text-zinc-900">{dictionary.themeLight}</button>
+            <button type="button" data-theme="dark" class="px-2 py-1 text-zinc-500 hover:text-zinc-900">{dictionary.themeDark}</button>
+            <button type="button" data-theme="system" class="px-2 py-1 text-zinc-500 hover:text-zinc-900">{dictionary.themeSystem}</button>
+          </nav>
+          <form
+            role="search"
+            aria-label={dictionary.searchLabel}
+            action="https://www.google.com/search"
+            method="get"
+            target="_blank"
+            data-search="desktop"
+            class="hidden sm:flex items-center gap-1"
+          >
+            <input type="hidden" name="sitesearch" value={siteUrl} />
+            <input
+              type="search"
+              name="q"
+              placeholder={dictionary.searchPlaceholder}
+              aria-label={dictionary.searchLabel}
+              class="w-40 rounded border border-zinc-300 px-2 py-1 text-sm focus:outline-none"
+            />
+          </form>
+          <button
+            type="button"
+            data-search="mobile-toggle"
+            aria-expanded="false"
+            aria-controls="mobile-search"
+            aria-label={dictionary.searchToggleLabel}
+            class="sm:hidden p-1 text-zinc-500 hover:text-zinc-900"
+          >
+            &#x1F50D;
+          </button>
         </div>
       </header>
       <main class="flex-1 py-10">
@@ -36,5 +86,59 @@ const title = pageTitle ? `${pageTitle} | ${siteConfig.title}` : siteConfig.titl
       </main>
       <footer class="border-t border-zinc-200 pt-4 text-sm text-zinc-600">{dictionary.footer}</footer>
     </div>
+    <div id="mobile-search" data-search="mobile" hidden class="border-b border-zinc-200 px-6 py-3">
+      <form
+        role="search"
+        aria-label={dictionary.searchLabel}
+        action="https://www.google.com/search"
+        method="get"
+        target="_blank"
+      >
+        <input type="hidden" name="sitesearch" value={siteUrl} />
+        <input
+          type="search"
+          name="q"
+          placeholder={dictionary.searchPlaceholder}
+          aria-label={dictionary.searchLabel}
+          class="w-full rounded border border-zinc-300 px-2 py-1 text-sm focus:outline-none"
+        />
+      </form>
+    </div>
+    <script data-search-toggle is:inline>
+      (function () {
+        var toggle = document.querySelector('[data-search="mobile-toggle"]');
+        var panel = document.querySelector('#mobile-search');
+        if (!toggle || !panel) return;
+        toggle.addEventListener('click', function () {
+          var expanded = toggle.getAttribute('aria-expanded') === 'true';
+          panel.hidden = expanded;
+          toggle.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+        });
+      })();
+    </script>
+    <script data-theme-interact is:inline define:vars={{ themeStorageKey }}>
+      (function () {
+        function applyTheme(value) {
+          var isDark = value === 'dark' ||
+            (value !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          document.documentElement.classList.toggle('dark', isDark);
+          document.querySelectorAll('[data-theme]').forEach(function (btn) {
+            btn.setAttribute('aria-pressed', btn.getAttribute('data-theme') === value ? 'true' : 'false');
+          });
+        }
+
+        var stored = null;
+        try { stored = localStorage.getItem(themeStorageKey); } catch (_) {}
+        applyTheme(stored || 'system');
+
+        document.querySelectorAll('[data-theme]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            var theme = btn.getAttribute('data-theme');
+            try { localStorage.setItem(themeStorageKey, theme); } catch (_) {}
+            applyTheme(theme);
+          });
+        });
+      })();
+    </script>
   </body>
 </html>

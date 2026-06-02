@@ -50,3 +50,33 @@ test('reuses the shared site shell for the en locale', () => {
 test('does not generate unsupported locale routes', () => {
   expect(existsSync(frIndexPath)).toBe(false);
 });
+
+test('renders locale switcher with all locales in agreed order on zh page', () => {
+  const html = readFileSync(zhIndexPath, 'utf8');
+
+  expect(html).toContain('aria-label="Language"');
+  expect(html).toContain('EN');
+  expect(html).toContain('中文');
+  expect(html).toContain('日本語');
+
+  const enIndex = html.indexOf('EN');
+  const zhIndex = html.indexOf('中文');
+  const jaIndex = html.indexOf('日本語');
+
+  expect(enIndex).toBeLessThan(zhIndex);
+  expect(zhIndex).toBeLessThan(jaIndex);
+});
+
+test('marks the current locale as selected in the locale switcher', () => {
+  const html = readFileSync(zhIndexPath, 'utf8');
+
+  expect(html).toContain('aria-current="page"');
+  expect(html).toMatch(/aria-current="page"[^>]*>中文/);
+});
+
+test('links non-current locales to their locale-prefixed pages', () => {
+  const html = readFileSync(zhIndexPath, 'utf8');
+
+  expect(html).toContain('href="/en/"');
+  expect(html).toContain('href="/ja/"');
+});
