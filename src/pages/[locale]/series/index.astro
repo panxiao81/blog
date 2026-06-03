@@ -1,0 +1,35 @@
+---
+import { getLocaleTaxonomyTerms, getTaxonomyTermHref } from '../../../content/posts';
+import { locales, type Locale } from '../../../config/site';
+import { dictionaries } from '../../../i18n/dictionaries';
+import SiteShell from '../../../layouts/SiteShell.astro';
+
+export function getStaticPaths() {
+  return locales.map((locale) => ({ params: { locale } }));
+}
+
+const locale = Astro.params.locale as Locale;
+const dictionary = dictionaries[locale];
+const terms = await getLocaleTaxonomyTerms(locale, 'series');
+---
+
+<SiteShell locale={locale} pageTitle={dictionary.series}>
+  <section class="space-y-6">
+    <h1 class="text-4xl font-semibold tracking-tight text-zinc-950">{dictionary.series}</h1>
+
+    {terms.length > 0 ? (
+      <ul class="space-y-3">
+        {terms.map(({ term, count }) => (
+          <li>
+            <a class="text-lg text-zinc-700 underline-offset-4 hover:underline" href={getTaxonomyTermHref(locale, 'series', term)}>
+              {term}
+            </a>
+            <span class="ml-2 text-sm text-zinc-500">({count})</span>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p class="text-base text-zinc-600">{dictionary.emptyTaxonomy}</p>
+    )}
+  </section>
+</SiteShell>

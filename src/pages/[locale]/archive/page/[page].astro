@@ -1,7 +1,8 @@
 ---
 import SiteShell from '../../../../layouts/SiteShell.astro';
-import { getLocalePostListItems } from '../../../../content/posts';
+import { getLocalePostListItems, getTaxonomyTermHref } from '../../../../content/posts';
 import { localeLabels, locales, postsPerPage, type Locale } from '../../../../config/site';
+import { dictionaries } from '../../../../i18n/dictionaries';
 
 export async function getStaticPaths() {
   const paths = [];
@@ -28,11 +29,12 @@ const { locale, posts } = Astro.props as {
   locale: Locale;
   posts: Awaited<ReturnType<typeof getLocalePostListItems>>;
 };
+const dictionary = dictionaries[locale];
 ---
 
-<SiteShell locale={locale} pageTitle="Archive">
+<SiteShell locale={locale} pageTitle={dictionary.archive}>
   <section class="space-y-6">
-    <h1 class="text-4xl font-semibold tracking-tight text-zinc-950">Archive</h1>
+    <h1 class="text-4xl font-semibold tracking-tight text-zinc-950">{dictionary.archive}</h1>
 
     {posts.map(({ entry, slug, sourceLocale, kind }) => (
       <article class="space-y-2 border-b border-zinc-200 pb-4 last:border-b-0">
@@ -43,8 +45,39 @@ const { locale, posts } = Astro.props as {
         {kind === 'placeholder' && (
           <p class="text-sm text-zinc-500">{localeLabels[sourceLocale]}</p>
         )}
-        <p class="text-sm text-zinc-700">{entry.data.tags.join(', ')}</p>
-        <p class="text-sm text-zinc-700">{entry.data.categories.join(', ')}</p>
+        {entry.data.tags.length > 0 && (
+          <p class="text-sm text-zinc-700">
+            <span class="font-medium">{dictionary.tags}:</span>{' '}
+            {entry.data.tags.map((term: string, index: number) => (
+              <>
+                {index > 0 && ', '}
+                <a class="underline-offset-4 hover:underline" href={getTaxonomyTermHref(sourceLocale, 'tags', term)}>{term}</a>
+              </>
+            ))}
+          </p>
+        )}
+        {entry.data.categories.length > 0 && (
+          <p class="text-sm text-zinc-700">
+            <span class="font-medium">{dictionary.categories}:</span>{' '}
+            {entry.data.categories.map((term: string, index: number) => (
+              <>
+                {index > 0 && ', '}
+                <a class="underline-offset-4 hover:underline" href={getTaxonomyTermHref(sourceLocale, 'categories', term)}>{term}</a>
+              </>
+            ))}
+          </p>
+        )}
+        {entry.data.series.length > 0 && (
+          <p class="text-sm text-zinc-700">
+            <span class="font-medium">{dictionary.series}:</span>{' '}
+            {entry.data.series.map((term: string, index: number) => (
+              <>
+                {index > 0 && ', '}
+                <a class="underline-offset-4 hover:underline" href={getTaxonomyTermHref(sourceLocale, 'series', term)}>{term}</a>
+              </>
+            ))}
+          </p>
+        )}
       </article>
     ))}
   </section>

@@ -2,7 +2,8 @@
 import { render } from 'astro:content';
 
 import type { Locale } from '../../../config/site';
-import { getPostRouteEntries, type PostRouteEntry } from '../../../content/posts';
+import { getPostRouteEntries, getTaxonomyTermHref, type PostRouteEntry } from '../../../content/posts';
+import { dictionaries } from '../../../i18n/dictionaries';
 import SiteShell from '../../../layouts/SiteShell.astro';
 
 export async function getStaticPaths() {
@@ -16,6 +17,7 @@ export async function getStaticPaths() {
 
 const { post, locale } = Astro.props as { post: PostRouteEntry['entry']; locale: Locale };
 const { Content } = await render(post);
+const dictionary = dictionaries[locale];
 const publishedDate = post.data.date.toISOString().slice(0, 10);
 ---
 
@@ -24,7 +26,40 @@ const publishedDate = post.data.date.toISOString().slice(0, 10);
     <header class="space-y-2">
       <p class="text-sm font-medium uppercase tracking-[0.2em] text-zinc-500">Post</p>
       <h1 class="text-4xl font-semibold tracking-tight text-zinc-950">{post.data.title}</h1>
-      <time class="text-sm text-zinc-600" datetime={publishedDate}>{publishedDate}</time>
+      <time class="block text-sm text-zinc-600" datetime={publishedDate}>{publishedDate}</time>
+      {post.data.tags.length > 0 && (
+        <p class="text-sm text-zinc-600">
+          <span class="font-medium">{dictionary.tags}:</span>{' '}
+          {post.data.tags.map((term: string, index: number) => (
+            <>
+              {index > 0 && ', '}
+              <a class="underline-offset-4 hover:underline" href={getTaxonomyTermHref(locale, 'tags', term)}>{term}</a>
+            </>
+          ))}
+        </p>
+      )}
+      {post.data.categories.length > 0 && (
+        <p class="text-sm text-zinc-600">
+          <span class="font-medium">{dictionary.categories}:</span>{' '}
+          {post.data.categories.map((term: string, index: number) => (
+            <>
+              {index > 0 && ', '}
+              <a class="underline-offset-4 hover:underline" href={getTaxonomyTermHref(locale, 'categories', term)}>{term}</a>
+            </>
+          ))}
+        </p>
+      )}
+      {post.data.series.length > 0 && (
+        <p class="text-sm text-zinc-600">
+          <span class="font-medium">{dictionary.series}:</span>{' '}
+          {post.data.series.map((term: string, index: number) => (
+            <>
+              {index > 0 && ', '}
+              <a class="underline-offset-4 hover:underline" href={getTaxonomyTermHref(locale, 'series', term)}>{term}</a>
+            </>
+          ))}
+        </p>
+      )}
     </header>
     <div class="max-w-2xl space-y-4 text-base leading-7 text-zinc-700">
       <Content />

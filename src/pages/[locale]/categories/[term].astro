@@ -1,0 +1,49 @@
+---
+import { getTaxonomyRouteEntries, type PostRouteEntry } from '../../../content/posts';
+import { postsPerPage, type Locale } from '../../../config/site';
+import { dictionaries } from '../../../i18n/dictionaries';
+import SiteShell from '../../../layouts/SiteShell.astro';
+
+export async function getStaticPaths() {
+  const entries = await getTaxonomyRouteEntries('categories');
+
+  return entries.map(({ locale, term, param, posts }) => ({
+    params: { locale, term: param },
+    props: {
+      locale,
+      term,
+      posts: posts.slice(0, postsPerPage),
+    },
+  }));
+}
+
+const { locale, term, posts } = Astro.props as {
+  locale: Locale;
+  term: string;
+  posts: PostRouteEntry[];
+};
+const dictionary = dictionaries[locale];
+const heading = `${dictionary.categoryLabel}: ${term}`;
+---
+
+<SiteShell locale={locale} pageTitle={heading}>
+  <section class="space-y-6">
+    <h1 class="text-4xl font-semibold tracking-tight text-zinc-950">{heading}</h1>
+
+    {posts.length > 0 ? (
+      posts.map(({ entry, slug }) => (
+        <article class="space-y-2">
+          <h2 class="text-2xl font-semibold tracking-tight text-zinc-950">
+            <a class="underline-offset-4 hover:underline" href={`/${locale}/posts/${slug}/`}>{entry.data.title}</a>
+          </h2>
+          <p class="text-sm text-zinc-500">{entry.data.date.toISOString().slice(0, 10)}</p>
+          {entry.data.description && (
+            <p class="text-base leading-7 text-zinc-700">{entry.data.description}</p>
+          )}
+        </article>
+      ))
+    ) : (
+      <p class="text-base text-zinc-600">{dictionary.emptyTaxonomy}</p>
+    )}
+  </section>
+</SiteShell>

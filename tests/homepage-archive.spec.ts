@@ -35,18 +35,18 @@ test('zh home page renders the most recent post items from typed post content', 
   expect(html).toContain('href="/zh/posts/third-note/"');
 });
 
-test('zh archive page renders recent post title, date, and taxonomy labels', () => {
+test('zh archive page renders recent post title, date, and browseable taxonomy labels', () => {
   const zhArchivePath = path.join(distDir, 'zh', 'archive', 'index.html');
 
   expect(existsSync(zhArchivePath)).toBe(true);
 
   const html = readFileSync(zhArchivePath, 'utf8');
 
-  expect(html).toContain('<title>Archive | Xiao Pan</title>');
+  expect(html).toContain('<title>归档 | Xiao Pan</title>');
   expect(html).toContain('Second Note');
   expect(html).toContain('2024-01-04');
-  expect(html).toContain('update');
-  expect(html).toContain('notes');
+  expect(html).toContain('href="/zh/tags/update/"');
+  expect(html).toContain('href="/zh/categories/notes/"');
 });
 
 test('en home page shows source-post placeholders in date order when no translations exist', () => {
