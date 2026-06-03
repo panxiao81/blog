@@ -1,0 +1,51 @@
+---
+import SiteShell from '../../../../layouts/SiteShell.astro';
+import { getLocalePostListItems } from '../../../../content/posts';
+import { localeLabels, locales, postsPerPage, type Locale } from '../../../../config/site';
+
+export async function getStaticPaths() {
+  const paths = [];
+
+  for (const locale of locales) {
+    const posts = await getLocalePostListItems(locale);
+    const totalPages = Math.ceil(posts.length / postsPerPage);
+
+    for (let page = 2; page <= totalPages; page += 1) {
+      paths.push({
+        params: { locale, page: String(page) },
+        props: {
+          locale,
+          posts: posts.slice((page - 1) * postsPerPage, page * postsPerPage),
+        },
+      });
+    }
+  }
+
+  return paths;
+}
+
+const { locale, posts } = Astro.props as {
+  locale: Locale;
+  posts: Awaited<ReturnType<typeof getLocalePostListItems>>;
+};
+---
+
+<SiteShell locale={locale} pageTitle="Archive">
+  <section class="space-y-6">
+    <h1 class="text-4xl font-semibold tracking-tight text-zinc-950">Archive</h1>
+
+    {posts.map(({ entry, slug, sourceLocale, kind }) => (
+      <article class="space-y-2 border-b border-zinc-200 pb-4 last:border-b-0">
+        <h2 class="text-xl font-semibold tracking-tight text-zinc-950">
+          <a class="underline-offset-4 hover:underline" href={`/${sourceLocale}/posts/${slug}/`}>{entry.data.title}</a>
+        </h2>
+        <p class="text-sm text-zinc-500">{entry.data.date.toISOString().slice(0, 10)}</p>
+        {kind === 'placeholder' && (
+          <p class="text-sm text-zinc-500">{localeLabels[sourceLocale]}</p>
+        )}
+        <p class="text-sm text-zinc-700">{entry.data.tags.join(', ')}</p>
+        <p class="text-sm text-zinc-700">{entry.data.categories.join(', ')}</p>
+      </article>
+    ))}
+  </section>
+</SiteShell>
