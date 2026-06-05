@@ -21,3 +21,6 @@ export const siteConfig = {
 export const postsPerPage = 2 as const;
 
 export const siteUrl: string = import.meta.env.SITE || '';
+
+export const utterancesRepo = 'panxiao81/blog' as const;
+export const defaultLicenseUrl = 'https://creativecommons.org/licenses/by-sa/4.0/' as const;

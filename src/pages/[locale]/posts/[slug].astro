@@ -1,68 +1,264 @@
 ---
 import { render } from 'astro:content';
 
-import type { Locale } from '../../../config/site';
-import { getPostRouteEntries, getTaxonomyTermHref, type PostRouteEntry } from '../../../content/posts';
+import { defaultLicenseUrl, utterancesRepo, type Locale } from '../../../config/site';
+import {
+  getAdjacentPosts,
+  getPostRouteEntries,
+  getTaxonomyTermHref,
+  type PostRouteEntry,
+} from '../../../content/posts';
 import { dictionaries } from '../../../i18n/dictionaries';
 import SiteShell from '../../../layouts/SiteShell.astro';
 
 export async function getStaticPaths() {
   const posts = await getPostRouteEntries();
 
-  return posts.map(({ entry, locale, slug }: PostRouteEntry) => ({
-    params: { locale, slug },
-    props: { post: entry, locale },
-  }));
+  return Promise.all(
+    posts.map(async ({ entry, locale, slug }: PostRouteEntry) => {
+      const { newer, older } = await getAdjacentPosts(locale, slug);
+
+      return {
+        params: { locale, slug },
+        props: { post: entry, locale, newer, older },
+      };
+    }),
+  );
 }
 
-const { post, locale } = Astro.props as { post: PostRouteEntry['entry']; locale: Locale };
-const { Content } = await render(post);
+const {
+  post,
+  locale,
+  newer,
+  older,
+} = Astro.props as {
+  post: PostRouteEntry['entry'];
+  locale: Locale;
+  newer: PostRouteEntry | null;
+  older: PostRouteEntry | null;
+};
+const { Content, headings } = await render(post);
 const dictionary = dictionaries[locale];
 const publishedDate = post.data.date.toISOString().slice(0, 10);
+const tocHeadings = headings.filter((h: { depth: number; slug: string; text: string }) => h.depth === 2 || h.depth === 3);
+const hasToc = tocHeadings.length > 0;
+const commentKey = `/posts/${post.id.split('/').pop()?.replace(/\.(md|mdx)$/, '')}/`;
+const licenseLabel = post.data.license ?? dictionary.licenseLabel;
+const licenseUrl = post.data.license ? undefined : defaultLicenseUrl;
 ---
 
 <SiteShell locale={locale} pageTitle={post.data.title}>
-  <article class="space-y-6">
-    <header class="space-y-2">
-      <p class="text-sm font-medium uppercase tracking-[0.2em] text-zinc-500">Post</p>
-      <h1 class="text-4xl font-semibold tracking-tight text-zinc-950">{post.data.title}</h1>
-      <time class="block text-sm text-zinc-600" datetime={publishedDate}>{publishedDate}</time>
-      {post.data.tags.length > 0 && (
-        <p class="text-sm text-zinc-600">
-          <span class="font-medium">{dictionary.tags}:</span>{' '}
-          {post.data.tags.map((term: string, index: number) => (
-            <>
-              {index > 0 && ', '}
-              <a class="underline-offset-4 hover:underline" href={getTaxonomyTermHref(locale, 'tags', term)}>{term}</a>
-            </>
-          ))}
-        </p>
+  <div class="lg:flex lg:gap-12">
+
+    <!-- Post content -->
+    <article class="min-w-0 flex-1 space-y-8">
+      <header class="space-y-3">
+        <p class="text-sm font-medium uppercase tracking-[0.2em] text-zinc-500">Post</p>
+        <h1 class="text-4xl font-semibold tracking-tight text-zinc-950">{post.data.title}</h1>
+        <time class="block text-sm text-zinc-600" datetime={publishedDate}>{publishedDate}</time>
+
+        {post.data.tags.length > 0 && (
+          <p class="text-sm text-zinc-600">
+            <span class="font-medium">{dictionary.tags}:</span>{' '}
+            {post.data.tags.map((term: string, index: number) => (
+              <>
+                {index > 0 && ', '}
+                <a class="underline-offset-4 hover:underline" href={getTaxonomyTermHref(locale, 'tags', term)}>{term}</a>
+              </>
+            ))}
+          </p>
+        )}
+        {post.data.categories.length > 0 && (
+          <p class="text-sm text-zinc-600">
+            <span class="font-medium">{dictionary.categories}:</span>{' '}
+            {post.data.categories.map((term: string, index: number) => (
+              <>
+                {index > 0 && ', '}
+                <a class="underline-offset-4 hover:underline" href={getTaxonomyTermHref(locale, 'categories', term)}>{term}</a>
+              </>
+            ))}
+          </p>
+        )}
+        {post.data.series.length > 0 && (
+          <p class="text-sm text-zinc-600">
+            <span class="font-medium">{dictionary.series}:</span>{' '}
+            {post.data.series.map((term: string, index: number) => (
+              <>
+                {index > 0 && ', '}
+                <a class="underline-offset-4 hover:underline" href={getTaxonomyTermHref(locale, 'series', term)}>{term}</a>
+              </>
+            ))}
+          </p>
+        )}
+
+        {post.data.autoTranslated && (
+          <p class="rounded border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+            {dictionary.translationNotice}
+          </p>
+        )}
+
+        {hasToc && (
+          <div class="lg:hidden">
+            <button
+              type="button"
+              id="toc-toggle"
+              aria-expanded="false"
+              aria-controls="toc-mobile"
+              class="flex items-center gap-1 text-sm text-zinc-600 underline-offset-4 hover:underline"
+            >
+              {dictionary.tocToggleLabel}
+            </button>
+            <nav id="toc-mobile" hidden aria-label={dictionary.tocHeading} class="mt-2 space-y-1 border-l-2 border-zinc-200 pl-4">
+              {tocHeadings.map((h: { depth: number; slug: string; text: string }) => (
+                <a
+                  href={`#${h.slug}`}
+                  class={`block text-sm text-zinc-600 underline-offset-4 hover:underline ${h.depth === 3 ? 'pl-4' : ''}`}
+                >
+                  {h.text}
+                </a>
+              ))}
+            </nav>
+          </div>
+        )}
+      </header>
+
+      <div class="prose prose-zinc max-w-none">
+        <Content />
+      </div>
+
+      <!-- License footer -->
+      <footer class="border-t border-zinc-200 pt-4 text-sm text-zinc-500">
+        {licenseUrl ? (
+          <a class="underline-offset-4 hover:underline" href={licenseUrl} target="_blank" rel="noopener noreferrer">{licenseLabel}</a>
+        ) : (
+          <span>{licenseLabel}</span>
+        )}
+      </footer>
+
+      <!-- Newer / Older navigation -->
+      {(newer || older) && (
+        <nav class="flex items-center justify-between gap-4 border-t border-zinc-200 pt-6 text-sm" aria-label="Post navigation">
+          <div class="flex-1">
+            {older && (
+              <a class="group flex flex-col gap-1 underline-offset-4 hover:underline" href={`/${locale}/posts/${older.slug}/`}>
+                <span class="text-zinc-500">{dictionary.olderPost}</span>
+                <span class="font-medium text-zinc-900">{older.entry.data.title}</span>
+              </a>
+            )}
+          </div>
+          <div class="flex-1 text-right">
+            {newer && (
+              <a class="group flex flex-col items-end gap-1 underline-offset-4 hover:underline" href={`/${locale}/posts/${newer.slug}/`}>
+                <span class="text-zinc-500">{dictionary.newerPost}</span>
+                <span class="font-medium text-zinc-900">{newer.entry.data.title}</span>
+              </a>
+            )}
+          </div>
+        </nav>
       )}
-      {post.data.categories.length > 0 && (
-        <p class="text-sm text-zinc-600">
-          <span class="font-medium">{dictionary.categories}:</span>{' '}
-          {post.data.categories.map((term: string, index: number) => (
-            <>
-              {index > 0 && ', '}
-              <a class="underline-offset-4 hover:underline" href={getTaxonomyTermHref(locale, 'categories', term)}>{term}</a>
-            </>
+
+      <!-- Comments -->
+      <section aria-label="Comments" class="mt-8">
+        <script
+          src="https://utteranc.es/client.js"
+          data-repo={utterancesRepo}
+          data-issue-term={commentKey}
+          data-theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async
+          is:inline
+        ></script>
+      </section>
+    </article>
+
+    <!-- Desktop sidebar TOC -->
+    {hasToc && (
+      <aside class="hidden lg:block lg:w-56 xl:w-64">
+        <nav aria-label={dictionary.tocHeading} class="sticky top-8 space-y-1">
+          <p class="mb-2 text-sm font-semibold text-zinc-900">{dictionary.tocHeading}</p>
+          {tocHeadings.map((h: { depth: number; slug: string; text: string }) => (
+            <a
+              href={`#${h.slug}`}
+              class={`block text-sm text-zinc-600 underline-offset-4 hover:underline ${h.depth === 3 ? 'pl-4' : ''}`}
+            >
+              {h.text}
+            </a>
           ))}
-        </p>
-      )}
-      {post.data.series.length > 0 && (
-        <p class="text-sm text-zinc-600">
-          <span class="font-medium">{dictionary.series}:</span>{' '}
-          {post.data.series.map((term: string, index: number) => (
-            <>
-              {index > 0 && ', '}
-              <a class="underline-offset-4 hover:underline" href={getTaxonomyTermHref(locale, 'series', term)}>{term}</a>
-            </>
-          ))}
-        </p>
-      )}
-    </header>
-    <div class="max-w-2xl space-y-4 text-base leading-7 text-zinc-700">
-      <Content />
-    </div>
-  </article>
+        </nav>
+      </aside>
+    )}
+  </div>
 </SiteShell>
+
+<script is:inline>
+  (function () {
+    const toggle = document.getElementById('toc-toggle');
+    const panel = document.getElementById('toc-mobile');
+
+    if (!toggle || !panel) return;
+
+    toggle.addEventListener('click', function () {
+      const expanded = toggle.getAttribute('aria-expanded') === 'true';
+
+      panel.hidden = expanded;
+      toggle.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+    });
+  })();
+</script>
+
+<script is:inline>
+  (function () {
+    document.querySelectorAll('pre > code').forEach(function (codeEl) {
+      const pre = codeEl.parentElement;
+
+      if (!pre) return;
+
+      const btn = document.createElement('button');
+
+      btn.type = 'button';
+      btn.textContent = 'Copy';
+      btn.setAttribute('aria-label', 'Copy code');
+      btn.style.cssText =
+        'position:absolute;top:0.5rem;right:0.5rem;font-size:0.75rem;padding:0.125rem 0.5rem;border-radius:0.25rem;background:rgba(0,0,0,0.08);cursor:pointer;';
+
+      if (getComputedStyle(pre).position === 'static') {
+        pre.style.position = 'relative';
+      }
+
+      btn.addEventListener('click', function () {
+        navigator.clipboard.writeText(codeEl.textContent || '').then(function () {
+          btn.textContent = 'Copied!';
+          setTimeout(function () {
+            btn.textContent = 'Copy';
+          }, 1500);
+        });
+      });
+
+      pre.appendChild(btn);
+    });
+  })();
+</script>
+
+<script type="module" is:inline>
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+
+  const codeBlocks = document.querySelectorAll('pre > code.language-mermaid');
+
+  if (codeBlocks.length > 0) {
+    mermaid.initialize({ startOnLoad: false, theme: 'neutral' });
+
+    codeBlocks.forEach(function (codeEl) {
+      const pre = codeEl.parentElement;
+
+      if (!pre) return;
+
+      const div = document.createElement('div');
+
+      div.className = 'mermaid';
+      div.textContent = codeEl.textContent || '';
+      pre.replaceWith(div);
+    });
+
+    mermaid.run({ querySelector: '.mermaid' });
+  }
+</script>

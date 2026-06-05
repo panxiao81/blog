@@ -160,6 +160,23 @@ export async function getLocaleTaxonomyPosts(
   return taxonomyMap.get(term) ?? [];
 }
 
+export async function getAdjacentPosts(
+  locale: Locale,
+  slug: string,
+): Promise<{ newer: PostRouteEntry | null; older: PostRouteEntry | null }> {
+  const posts = await getLocalePosts(locale);
+  const idx = posts.findIndex((p) => p.slug === slug);
+
+  if (idx === -1) {
+    return { newer: null, older: null };
+  }
+
+  return {
+    newer: idx > 0 ? posts[idx - 1] : null,
+    older: idx < posts.length - 1 ? posts[idx + 1] : null,
+  };
+}
+
 export async function getTaxonomyRouteEntries(taxonomy: TaxonomyKey): Promise<TaxonomyRouteEntry[]> {
   const entries: TaxonomyRouteEntry[] = [];
 

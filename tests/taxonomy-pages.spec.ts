@@ -60,9 +60,11 @@ test('zh category result pages use a clean page 1 route and paginate older posts
   const page2Html = readFileSync(zhCategoryPage2Path, 'utf8');
 
   expect(page1Html).toContain('分类: notes');
+  expect(page1Html).toContain('Rich Post');
   expect(page1Html).toContain('Second Note');
-  expect(page1Html).toContain('Third Note');
+  expect(page1Html).not.toContain('Third Note');
   expect(page1Html).not.toContain('Hello World');
+  expect(page2Html).toContain('Third Note');
   expect(page2Html).toContain('Hello World');
 });
 

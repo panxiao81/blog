@@ -28,11 +28,11 @@ test('zh home page renders the most recent post items from typed post content', 
 
   const html = readFileSync(zhHomePath, 'utf8');
 
+  expect(html).toContain('Rich Post');
   expect(html).toContain('Second Note');
   expect(html).toContain('The second source post.');
-  expect(html).toContain('Third Note');
+  expect(html).toContain('href="/zh/posts/rich-post/"');
   expect(html).toContain('href="/zh/posts/second-note/"');
-  expect(html).toContain('href="/zh/posts/third-note/"');
 });
 
 test('zh archive page renders recent post title, date, and browseable taxonomy labels', () => {
@@ -53,11 +53,11 @@ test('en home page shows source-post placeholders in date order when no translat
   const enHomePath = path.join(distDir, 'en', 'index.html');
   const html = readFileSync(enHomePath, 'utf8');
 
+  expect(html).toContain('Rich Post');
   expect(html).toContain('Second Note');
-  expect(html).toContain('Third Note');
   expect(html).not.toContain('Hello World');
+  expect(html).toContain('href="/zh/posts/rich-post/"');
   expect(html).toContain('href="/zh/posts/second-note/"');
-  expect(html).toContain('href="/zh/posts/third-note/"');
   expect(html).toContain('中文');
 });
 

@@ -22,6 +22,12 @@ export type SiteDictionary = {
   searchLabel: string;
   searchPlaceholder: string;
   searchToggleLabel: string;
+  tocHeading: string;
+  tocToggleLabel: string;
+  translationNotice: string;
+  newerPost: string;
+  olderPost: string;
+  licenseLabel: string;
 };
 
 export const dictionaries: Record<Locale, SiteDictionary> = {
@@ -47,6 +53,12 @@ export const dictionaries: Record<Locale, SiteDictionary> = {
     searchLabel: 'Search',
     searchPlaceholder: 'Search…',
     searchToggleLabel: 'Toggle search',
+    tocHeading: 'Contents',
+    tocToggleLabel: 'Toggle table of contents',
+    translationNotice: 'This post was automatically translated.',
+    newerPost: 'Newer',
+    olderPost: 'Older',
+    licenseLabel: 'CC BY-SA 4.0',
   },
   zh: {
     home: '首页',
@@ -70,6 +82,12 @@ export const dictionaries: Record<Locale, SiteDictionary> = {
     searchLabel: '搜索',
     searchPlaceholder: '搜索…',
     searchToggleLabel: '展开搜索',
+    tocHeading: '目录',
+    tocToggleLabel: '切换目录',
+    translationNotice: '本文由机器翻译生成。',
+    newerPost: '更新',
+    olderPost: '更早',
+    licenseLabel: 'CC BY-SA 4.0',
   },
   ja: {
     home: 'ホーム',
@@ -93,5 +111,11 @@ export const dictionaries: Record<Locale, SiteDictionary> = {
     searchLabel: '検索',
     searchPlaceholder: '検索…',
     searchToggleLabel: '検索を表示',
+    tocHeading: '目次',
+    tocToggleLabel: '目次を切り替える',
+    translationNotice: 'この記事は自動翻訳されています。',
+    newerPost: '新しい',
+    olderPost: '古い',
+    licenseLabel: 'CC BY-SA 4.0',
   },
 };

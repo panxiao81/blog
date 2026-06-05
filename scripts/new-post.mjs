@@ -53,6 +53,7 @@ autoTranslated: false
 tags: []
 categories: []
 series: []
+license: ""
 ---
 
 `;

@@ -16,6 +16,7 @@ const posts = defineCollection({
     tags: z.array(z.string()),
     categories: z.array(z.string()),
     series: z.array(z.string()),
+    license: z.string().optional(),
   }),
 });
 
