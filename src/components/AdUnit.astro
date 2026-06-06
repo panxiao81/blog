@@ -1,0 +1,23 @@
+---
+interface Props {
+  adSlot: string;
+  class?: string;
+}
+
+import { adsenseId } from '../config/site';
+
+const { adSlot, class: cls } = Astro.props;
+---
+{adsenseId && adSlot && (
+  <div class:list={['overflow-hidden', cls]}>
+    <ins
+      class="adsbygoogle"
+      style="display:block"
+      data-ad-client={adsenseId}
+      data-ad-slot={adSlot}
+      data-ad-format="auto"
+      data-full-width-responsive="true"
+    />
+    <script is:inline>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
+)}

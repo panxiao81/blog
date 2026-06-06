@@ -1,7 +1,8 @@
 ---
 import { render } from 'astro:content';
 
-import { defaultLicenseUrl, siteUrl, utterancesRepo, type Locale } from '../../../config/site';
+import { adsensePostSlot, defaultLicenseUrl, siteUrl, utterancesRepo, type Locale } from '../../../config/site';
+import AdUnit from '../../../components/AdUnit.astro';
 import {
   getAdjacentPosts,
   getPostRouteEntries,
@@ -139,6 +140,8 @@ const hreflangAlternates = siteUrl
       <div class="prose prose-zinc max-w-none">
         <Content />
       </div>
+
+      <AdUnit adSlot={adsensePostSlot} class="mt-8" />
 
       <!-- License footer -->
       <footer class="border-t border-zinc-200 pt-4 text-sm text-zinc-500">

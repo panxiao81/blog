@@ -30,6 +30,9 @@ export type SiteDictionary = {
   licenseLabel: string;
   rssLabel: string;
   privacySettings: string;
+  consentMessage: string;
+  consentAccept: string;
+  consentDecline: string;
 };
 
 export const dictionaries: Record<Locale, SiteDictionary> = {
@@ -63,6 +66,9 @@ export const dictionaries: Record<Locale, SiteDictionary> = {
     licenseLabel: 'CC BY-SA 4.0',
     rssLabel: 'RSS',
     privacySettings: 'Privacy Settings',
+    consentMessage: 'This site uses cookies for analytics and advertising.',
+    consentAccept: 'Accept',
+    consentDecline: 'Decline',
   },
   zh: {
     home: '首页',
@@ -94,6 +100,9 @@ export const dictionaries: Record<Locale, SiteDictionary> = {
     licenseLabel: 'CC BY-SA 4.0',
     rssLabel: 'RSS',
     privacySettings: '隐私设置',
+    consentMessage: '本站使用 Cookie 用于分析和广告。',
+    consentAccept: '接受',
+    consentDecline: '拒绝',
   },
   ja: {
     home: 'ホーム',
@@ -125,5 +134,8 @@ export const dictionaries: Record<Locale, SiteDictionary> = {
     licenseLabel: 'CC BY-SA 4.0',
     rssLabel: 'RSS',
     privacySettings: 'プライバシー設定',
+    consentMessage: 'このサイトはアナリティクスと広告のためにCookieを使用しています。',
+    consentAccept: '同意する',
+    consentDecline: '断る',
   },
 };

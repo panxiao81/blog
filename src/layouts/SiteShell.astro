@@ -1,7 +1,7 @@
 ---
 import '../styles/global.css';
 
-import { siteConfig, siteUrl, siteFoundingYear, locales, localeLabels, themePreferenceStorageKey, type Locale } from '../config/site';
+import { siteConfig, siteUrl, siteFoundingYear, gtagId, adsenseId, consentStorageKey, locales, localeLabels, themePreferenceStorageKey, type Locale } from '../config/site';
 import { dictionaries } from '../i18n/dictionaries';
 
 interface Props {
@@ -38,6 +38,25 @@ const yearRange = currentYear > siteFoundingYear
     <meta property="og:type" content={ogType} />
     {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
     {siteUrl && <meta property="og:image" content={`${siteUrl}/og-default.svg`} />}
+    {gtagId && (
+      <>
+        <script is:inline define:vars={{ gtagId }}>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(...args){dataLayer.push(args);}
+          gtag('consent', 'default', {
+            ad_storage: 'denied', analytics_storage: 'denied',
+            ad_user_data: 'denied', ad_personalization: 'denied',
+            wait_for_update: 500,
+          });
+          gtag('js', new Date());
+          gtag('config', gtagId);
+        </script>
+        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${gtagId}`}></script>
+      </>
+    )}
+    {adsenseId && (
+      <script is:inline async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseId}`} crossorigin="anonymous"></script>
+    )}
     <script data-theme-init is:inline define:vars={{ themeStorageKey }}>
       (function () {
         let stored;
@@ -179,6 +198,68 @@ const yearRange = currentYear > siteFoundingYear
             }
             applyTheme(theme);
           });
+        });
+      })();
+    </script>
+    <div
+      id="consent-banner"
+      hidden
+      class="fixed bottom-0 inset-x-0 z-50 border-t border-zinc-200 bg-white px-6 py-4 shadow-lg"
+    >
+      <div class="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-4">
+        <p class="text-sm text-zinc-700">{dictionary.consentMessage}</p>
+        <div class="flex gap-3">
+          <button
+            id="consent-accept"
+            type="button"
+            class="rounded bg-zinc-900 px-4 py-2 text-sm text-white hover:bg-zinc-700"
+          >
+            {dictionary.consentAccept}
+          </button>
+          <button
+            id="consent-decline"
+            type="button"
+            class="rounded border border-zinc-300 px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-100"
+          >
+            {dictionary.consentDecline}
+          </button>
+        </div>
+      </div>
+    </div>
+    <script data-consent is:inline define:vars={{ consentStorageKey }}>
+      (function () {
+        const KEY = consentStorageKey;
+        let stored;
+        try { stored = localStorage.getItem(KEY); } catch { stored = null; }
+
+        if (stored === 'granted' && typeof gtag !== 'undefined') {
+          gtag('consent', 'update', {
+            ad_storage: 'granted', analytics_storage: 'granted',
+            ad_user_data: 'granted', ad_personalization: 'granted',
+          });
+        }
+
+        const banner = document.getElementById('consent-banner');
+        if (!stored && banner) banner.hidden = false;
+
+        function save(choice) {
+          try { localStorage.setItem(KEY, choice); } catch { /* storage unavailable */ }
+          if (choice === 'granted' && typeof gtag !== 'undefined') {
+            gtag('consent', 'update', {
+              ad_storage: 'granted', analytics_storage: 'granted',
+              ad_user_data: 'granted', ad_personalization: 'granted',
+            });
+          }
+          if (banner) banner.hidden = true;
+        }
+
+        const acceptBtn = document.getElementById('consent-accept');
+        const declineBtn = document.getElementById('consent-decline');
+        if (acceptBtn) acceptBtn.addEventListener('click', function () { save('granted'); });
+        if (declineBtn) declineBtn.addEventListener('click', function () { save('denied'); });
+
+        document.querySelectorAll('[data-consent-reopen]').forEach(function (el) {
+          el.addEventListener('click', function () { if (banner) banner.hidden = false; });
         });
       })();
     </script>

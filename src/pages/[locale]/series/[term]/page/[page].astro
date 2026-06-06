@@ -1,8 +1,9 @@
 ---
 import { getTaxonomyRouteEntries, type PostRouteEntry } from '../../../../../content/posts';
-import { postsPerPage, type Locale } from '../../../../../config/site';
+import { adsenseListSlot, postsPerPage, type Locale } from '../../../../../config/site';
 import { dictionaries } from '../../../../../i18n/dictionaries';
 import SiteShell from '../../../../../layouts/SiteShell.astro';
+import AdUnit from '../../../../../components/AdUnit.astro';
 
 export async function getStaticPaths() {
   const entries = await getTaxonomyRouteEntries('series');
@@ -54,5 +55,6 @@ const heading = `${dictionary.seriesLabel}: ${term}`;
     ) : (
       <p class="text-base text-zinc-600">{dictionary.emptyTaxonomy}</p>
     )}
+    <AdUnit adSlot={adsenseListSlot} class="mt-6" />
   </section>
 </SiteShell>

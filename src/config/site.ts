@@ -25,3 +25,9 @@ export const siteUrl: string = import.meta.env.SITE || '';
 export const utterancesRepo = 'panxiao81/blog' as const;
 export const defaultLicenseUrl = 'https://creativecommons.org/licenses/by-sa/4.0/' as const;
 export const siteFoundingYear = 2024 as const;
+
+export const gtagId: string = import.meta.env.GTAG_ID || '';
+export const adsenseId: string = import.meta.env.ADSENSE_ID || '';
+export const adsenseListSlot: string = import.meta.env.ADSENSE_LIST_SLOT || '';
+export const adsensePostSlot: string = import.meta.env.ADSENSE_POST_SLOT || '';
+export const consentStorageKey = 'consent-choice' as const;

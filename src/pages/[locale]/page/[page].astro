@@ -1,7 +1,8 @@
 ---
 import SiteShell from '../../../layouts/SiteShell.astro';
+import AdUnit from '../../../components/AdUnit.astro';
 import { getLocalePostListItems } from '../../../content/posts';
-import { localeLabels, locales, postsPerPage, type Locale } from '../../../config/site';
+import { adsenseListSlot, localeLabels, locales, postsPerPage, type Locale } from '../../../config/site';
 import { dictionaries } from '../../../i18n/dictionaries';
 
 export async function getStaticPaths() {
@@ -47,5 +48,6 @@ const dictionary = dictionaries[locale];
         )}
       </article>
     ))}
+    <AdUnit adSlot={adsenseListSlot} class="mt-6" />
   </section>
 </SiteShell>
