@@ -7,7 +7,7 @@ export default tseslint.config(
     ignores: ['dist/**', '.astro/**'],
   },
   {
-    files: ['scripts/**/*.{js,mjs}', 'tests/**/*.ts'],
+    files: ['scripts/**/*.{js,mjs}', 'tests/**/*.ts', '*.config.{js,mjs,ts}'],
     languageOptions: {
       globals: {
         console: 'readonly',

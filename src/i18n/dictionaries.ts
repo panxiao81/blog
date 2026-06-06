@@ -28,6 +28,8 @@ export type SiteDictionary = {
   newerPost: string;
   olderPost: string;
   licenseLabel: string;
+  rssLabel: string;
+  privacySettings: string;
 };
 
 export const dictionaries: Record<Locale, SiteDictionary> = {
@@ -59,6 +61,8 @@ export const dictionaries: Record<Locale, SiteDictionary> = {
     newerPost: 'Newer',
     olderPost: 'Older',
     licenseLabel: 'CC BY-SA 4.0',
+    rssLabel: 'RSS',
+    privacySettings: 'Privacy Settings',
   },
   zh: {
     home: '首页',
@@ -88,6 +92,8 @@ export const dictionaries: Record<Locale, SiteDictionary> = {
     newerPost: '更新',
     olderPost: '更早',
     licenseLabel: 'CC BY-SA 4.0',
+    rssLabel: 'RSS',
+    privacySettings: '隐私设置',
   },
   ja: {
     home: 'ホーム',
@@ -117,5 +123,7 @@ export const dictionaries: Record<Locale, SiteDictionary> = {
     newerPost: '新しい',
     olderPost: '古い',
     licenseLabel: 'CC BY-SA 4.0',
+    rssLabel: 'RSS',
+    privacySettings: 'プライバシー設定',
   },
 };

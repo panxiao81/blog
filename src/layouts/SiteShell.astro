@@ -1,26 +1,43 @@
 ---
 import '../styles/global.css';
 
-import { siteConfig, siteUrl, locales, localeLabels, themePreferenceStorageKey, type Locale } from '../config/site';
+import { siteConfig, siteUrl, siteFoundingYear, locales, localeLabels, themePreferenceStorageKey, type Locale } from '../config/site';
 import { dictionaries } from '../i18n/dictionaries';
 
 interface Props {
   locale: Locale;
   pageTitle?: string;
+  description?: string;
+  hreflangAlternates?: Array<{ locale: string; url: string }>;
+  ogType?: 'website' | 'article';
 }
 
-const { locale, pageTitle } = Astro.props;
+const { locale, pageTitle, description, hreflangAlternates, ogType = 'website' } = Astro.props;
 const dictionary = dictionaries[locale];
 const title = pageTitle ? `${pageTitle} | ${siteConfig.title}` : siteConfig.title;
 const themeStorageKey = themePreferenceStorageKey;
+const pageDescription = description ?? siteConfig.description;
+const canonicalUrl = siteUrl ? `${siteUrl}${Astro.url.pathname}` : undefined;
+const currentYear = new Date().getFullYear();
+const yearRange = currentYear > siteFoundingYear
+  ? `${siteFoundingYear}–${currentYear}`
+  : String(siteFoundingYear);
 ---
 
 <html lang={locale}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content={siteConfig.description} />
+    <meta name="description" content={pageDescription} />
     <title>{title}</title>
+    {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+    {hreflangAlternates?.map((alt) => (
+      <link rel="alternate" hreflang={alt.locale} href={alt.url} />
+    ))}
+    <meta property="og:title" content={title} />
+    <meta property="og:type" content={ogType} />
+    {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
+    {siteUrl && <meta property="og:image" content={`${siteUrl}/og-default.svg`} />}
     <script data-theme-init is:inline define:vars={{ themeStorageKey }}>
       (function () {
         let stored;
@@ -95,8 +112,12 @@ const themeStorageKey = themePreferenceStorageKey;
         <slot />
       </main>
       <footer class="flex items-center justify-between gap-3 border-t border-zinc-200 pt-4 text-sm text-zinc-600">
-        <span>{dictionary.footer}</span>
-        <a class="text-zinc-700 underline-offset-4 hover:underline" href={`/${locale}/privacy/`}>{dictionary.privacy}</a>
+        <span>© {yearRange} {siteConfig.title}</span>
+        <nav aria-label="Footer" class="flex items-center gap-3">
+          <a class="underline-offset-4 hover:underline" href={`/${locale}/privacy/`}>{dictionary.privacy}</a>
+          <button type="button" data-consent-reopen class="underline-offset-4 hover:underline">{dictionary.privacySettings}</button>
+          <a class="underline-offset-4 hover:underline" href={`/${locale}/rss.xml`}>{dictionary.rssLabel}</a>
+        </nav>
       </footer>
     </div>
     <div id="mobile-search" data-search="mobile" hidden class="border-b border-zinc-200 px-6 py-3">

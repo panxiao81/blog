@@ -24,3 +24,4 @@ export const siteUrl: string = import.meta.env.SITE || '';
 
 export const utterancesRepo = 'panxiao81/blog' as const;
 export const defaultLicenseUrl = 'https://creativecommons.org/licenses/by-sa/4.0/' as const;
+export const siteFoundingYear = 2024 as const;
