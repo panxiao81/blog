@@ -15,21 +15,21 @@ const terms = await getLocaleTaxonomyTerms(locale, 'tags');
 
 <SiteShell locale={locale} pageTitle={dictionary.tags}>
   <section class="space-y-6">
-    <h1 class="text-4xl font-semibold tracking-tight text-zinc-950">{dictionary.tags}</h1>
+    <h1 class="text-4xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50">{dictionary.tags}</h1>
 
     {terms.length > 0 ? (
       <ul class="space-y-3">
         {terms.map(({ term, count }) => (
           <li>
-            <a class="text-lg text-zinc-700 underline-offset-4 hover:underline" href={getTaxonomyTermHref(locale, 'tags', term)}>
+            <a class="text-lg text-zinc-700 dark:text-zinc-300 underline-offset-4 hover:underline" href={getTaxonomyTermHref(locale, 'tags', term)}>
               {term}
             </a>
-            <span class="ml-2 text-sm text-zinc-500">({count})</span>
+            <span class="ml-2 text-sm text-zinc-500 dark:text-zinc-400">({count})</span>
           </li>
         ))}
       </ul>
     ) : (
-      <p class="text-base text-zinc-600">{dictionary.emptyTaxonomy}</p>
+      <p class="text-base text-zinc-600 dark:text-zinc-400">{dictionary.emptyTaxonomy}</p>
     )}
   </section>
 </SiteShell>

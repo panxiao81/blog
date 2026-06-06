@@ -35,19 +35,19 @@ const dictionary = dictionaries[locale];
 
 <SiteShell locale={locale} pageTitle={dictionary.archive}>
   <section class="space-y-6">
-    <h1 class="text-4xl font-semibold tracking-tight text-zinc-950">{dictionary.archive}</h1>
+    <h1 class="text-4xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50">{dictionary.archive}</h1>
 
     {posts.map(({ entry, slug, sourceLocale, kind }) => (
-      <article class="space-y-2 border-b border-zinc-200 pb-4 last:border-b-0">
-        <h2 class="text-xl font-semibold tracking-tight text-zinc-950">
+      <article class="space-y-2 border-b border-zinc-200 dark:border-zinc-800 pb-4 last:border-b-0">
+        <h2 class="text-xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50">
           <a class="underline-offset-4 hover:underline" href={`/${sourceLocale}/posts/${slug}/`}>{entry.data.title}</a>
         </h2>
-        <p class="text-sm text-zinc-500">{entry.data.date.toISOString().slice(0, 10)}</p>
+        <p class="text-sm text-zinc-500 dark:text-zinc-400">{entry.data.date.toISOString().slice(0, 10)}</p>
         {kind === 'placeholder' && (
-          <p class="text-sm text-zinc-500">{localeLabels[sourceLocale]}</p>
+          <p class="text-sm text-zinc-500 dark:text-zinc-400">{localeLabels[sourceLocale]}</p>
         )}
         {entry.data.tags.length > 0 && (
-          <p class="text-sm text-zinc-700">
+          <p class="text-sm text-zinc-700 dark:text-zinc-300">
             <span class="font-medium">{dictionary.tags}:</span>{' '}
             {entry.data.tags.map((term: string, index: number) => (
               <>
@@ -58,7 +58,7 @@ const dictionary = dictionaries[locale];
           </p>
         )}
         {entry.data.categories.length > 0 && (
-          <p class="text-sm text-zinc-700">
+          <p class="text-sm text-zinc-700 dark:text-zinc-300">
             <span class="font-medium">{dictionary.categories}:</span>{' '}
             {entry.data.categories.map((term: string, index: number) => (
               <>
@@ -69,7 +69,7 @@ const dictionary = dictionaries[locale];
           </p>
         )}
         {entry.data.series.length > 0 && (
-          <p class="text-sm text-zinc-700">
+          <p class="text-sm text-zinc-700 dark:text-zinc-300">
             <span class="font-medium">{dictionary.series}:</span>{' '}
             {entry.data.series.map((term: string, index: number) => (
               <>
