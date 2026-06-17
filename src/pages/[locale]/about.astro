@@ -3,16 +3,27 @@ import type { MarkdownInstance } from 'astro';
 
 import SiteShell from '../../layouts/SiteShell.astro';
 import { locales, type Locale } from '../../config/site';
+import { dictionaries } from '../../i18n/dictionaries';
 
 export function getStaticPaths() {
   return locales.map((locale) => ({ params: { locale } }));
 }
 
-type MarkdownPageModule = MarkdownInstance<{
+type AboutFrontmatter = {
   title: string;
-}>;
+  name: string;
+  role: string;
+  location?: string;
+  focus: string[];
+  experience: Array<{ period: string; title: string; org: string; url?: string }>;
+  skills: Array<{ group: string; items: string[] }>;
+  languages: string[];
+  links: Array<{ label: string; href: string }>;
+};
 
 const locale = Astro.params.locale as Locale;
+const dictionary = dictionaries[locale];
+
 const aboutPages = import.meta.glob('../../content/pages/about/*.md');
 const loadAboutPage = aboutPages[`../../content/pages/about/${locale}.md`];
 
@@ -20,12 +31,82 @@ if (!loadAboutPage) {
   throw new Error(`Missing About page for locale: ${locale}`);
 }
 
-const aboutPage = await loadAboutPage() as MarkdownPageModule;
+const aboutPage = await loadAboutPage() as MarkdownInstance<AboutFrontmatter>;
 const { Content, frontmatter } = aboutPage;
+
+// Section labels are Site Chrome, so they live in the locale dictionary; the
+// profile data itself comes from each locale's Markdown frontmatter.
+const sectionLabel = 'text-sm font-medium uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-400';
+const sectionRow = 'grid gap-3 border-t border-zinc-200 dark:border-zinc-800 py-8 md:grid-cols-[10rem_1fr] md:gap-8';
 ---
 
 <SiteShell locale={locale} pageTitle={frontmatter.title}>
+  <header class="space-y-3 pb-8">
+    <h1 class="text-4xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50">{frontmatter.name}</h1>
+    <p class="text-base text-zinc-600 dark:text-zinc-400">
+      {frontmatter.role}{frontmatter.location && <> · {frontmatter.location}</>}
+    </p>
+  </header>
+
   <article class="prose prose-zinc dark:prose-invert max-w-none">
     <Content />
   </article>
+
+  <section class={sectionRow}>
+    <h2 class={sectionLabel}>{dictionary.aboutFocus}</h2>
+    <ul class="space-y-1.5 text-base leading-7 text-zinc-700 dark:text-zinc-300">
+      {frontmatter.focus.map((item) => <li>{item}</li>)}
+    </ul>
+  </section>
+
+  <section class={sectionRow}>
+    <h2 class={sectionLabel}>{dictionary.aboutExperience}</h2>
+    <ol class="space-y-5">
+      {frontmatter.experience.map((entry) => (
+        <li class="space-y-0.5">
+          <p class="text-sm text-zinc-500 dark:text-zinc-400">{entry.period}</p>
+          <p class="text-base font-medium text-zinc-900 dark:text-zinc-100">{entry.title}</p>
+          <p class="text-base text-zinc-600 dark:text-zinc-400">
+            {entry.url
+              ? <a class="underline-offset-4 hover:underline" href={entry.url} target="_blank" rel="noopener noreferrer">{entry.org}</a>
+              : entry.org}
+          </p>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <section class={sectionRow}>
+    <h2 class={sectionLabel}>{dictionary.aboutSkills}</h2>
+    <dl class="space-y-4">
+      {frontmatter.skills.map((group) => (
+        <div class="space-y-0.5">
+          <dt class="text-sm text-zinc-500 dark:text-zinc-400">{group.group}</dt>
+          <dd class="text-base text-zinc-800 dark:text-zinc-200">{group.items.join(' · ')}</dd>
+        </div>
+      ))}
+    </dl>
+  </section>
+
+  <section class={sectionRow}>
+    <h2 class={sectionLabel}>{dictionary.aboutLanguages}</h2>
+    <ul class="space-y-1.5 text-base leading-7 text-zinc-700 dark:text-zinc-300">
+      {frontmatter.languages.map((item) => <li>{item}</li>)}
+    </ul>
+  </section>
+
+  <section class={sectionRow}>
+    <h2 class={sectionLabel}>{dictionary.aboutElsewhere}</h2>
+    <ul class="flex flex-wrap gap-x-6 gap-y-2 text-base text-zinc-700 dark:text-zinc-300">
+      {frontmatter.links.map((link) => (
+        <li>
+          <a
+            class="underline-offset-4 hover:underline"
+            href={link.href}
+            {...link.href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {}}
+          >{link.label}</a>
+        </li>
+      ))}
+    </ul>
+  </section>
 </SiteShell>

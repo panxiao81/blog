@@ -102,36 +102,61 @@ export async function getLocalePosts(locale: Locale): Promise<PostRouteEntry[]> 
     .sort(sortByDateDesc);
 }
 
+// The Source Post of a slug is the author-written version; any Translated Posts
+// share the slug in other Locales and carry autoTranslated. We fall back to the
+// default Locale, then any entry, so listings stay resilient when a slug's
+// Translation State is incomplete or no version is marked as the source.
+function getSourcePost(group: PostRouteEntry[]): PostRouteEntry {
+  return (
+    group.find((entry) => !entry.entry.data.autoTranslated) ??
+    group.find((entry) => entry.locale === defaultLocale) ??
+    group[0]
+  );
+}
+
 export async function getLocalePostListItems(locale: Locale): Promise<LocalePostListItem[]> {
   const routeEntries = await getPostRouteEntries();
-  const localeEntries = routeEntries.filter((entry) => entry.locale === locale);
 
-  const items: LocalePostListItem[] = localeEntries.map(({ entry, locale: entryLocale, slug }) => ({
-    kind: 'post',
-    entry,
-    locale: entryLocale,
-    slug,
-    sourceLocale: entryLocale,
-  }));
+  // Group every Post by its shared slug so each logical Post is considered once,
+  // regardless of which Locales it has been written or translated into.
+  const postsBySlug = new Map<string, PostRouteEntry[]>();
+  for (const entry of routeEntries) {
+    const group = postsBySlug.get(entry.slug);
 
-  if (locale !== defaultLocale) {
-    const sourceEntries = routeEntries.filter((entry) => entry.locale === defaultLocale);
-
-    for (const sourceEntry of sourceEntries) {
-      const hasTranslation = routeEntries.some(
-        (entry) => entry.locale === locale && entry.slug === sourceEntry.slug,
-      );
-
-      if (!hasTranslation) {
-        items.push({
-          kind: 'placeholder',
-          entry: sourceEntry.entry,
-          locale,
-          slug: sourceEntry.slug,
-          sourceLocale: sourceEntry.locale,
-        });
-      }
+    if (group) {
+      group.push(entry);
+    } else {
+      postsBySlug.set(entry.slug, [entry]);
     }
+  }
+
+  const items: LocalePostListItem[] = [];
+
+  for (const group of postsBySlug.values()) {
+    const localized = group.find((entry) => entry.locale === locale);
+
+    if (localized) {
+      // A version exists in this Locale (Source or Translated): link to it directly.
+      items.push({
+        kind: 'post',
+        entry: localized.entry,
+        locale,
+        slug: localized.slug,
+        sourceLocale: localized.locale,
+      });
+      continue;
+    }
+
+    // No version here yet: show a Source Post Placeholder that points readers to
+    // the Source Post in its original Locale, whichever Locale that is.
+    const source = getSourcePost(group);
+    items.push({
+      kind: 'placeholder',
+      entry: source.entry,
+      locale,
+      slug: source.slug,
+      sourceLocale: source.locale,
+    });
   }
 
   return items.sort(sortByDateDesc);
