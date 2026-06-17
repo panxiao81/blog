@@ -7,8 +7,9 @@ import { buildFixtureSite, distDir } from './support/site-build';
 
 // These tests run against the fixed fixture content set (tests/fixtures/posts):
 // 13 zh posts dated 2024-03-13 (newest, "Rich Post") down to 2024-03-01
-// (oldest, "Oldest Fixture Note"). With 10 posts per page, page 1 holds the
-// newest 10 and page 2 holds the last 3 — the first of which is
+// ("Oldest Fixture Note"), plus one en source post, "English Source Note"
+// (2022-01-01), which is the oldest of all. With 10 posts per page, page 1 holds
+// the newest 10 and page 2 holds the rest — the first of which is still
 // "Fixture Note Seven" (2024-03-03). Adding or removing real posts does not
 // touch these fixtures, so these assertions stay stable.
 const zhHomePath = path.join(distDir, 'zh', 'index.html');
@@ -95,4 +96,22 @@ test('en archive shows source-post placeholders linking to zh posts', () => {
   expect(html).toContain('Rich Post');
   expect(html).toContain('href="/zh/posts/rich-post/"');
   expect(html).toContain('中文');
+});
+
+test('zh archive shows a source-post placeholder for an en-authored post', () => {
+  // The en source post is the oldest entry, so its placeholder lands on the last
+  // archive page. This proves placeholders propagate from any source Locale, not
+  // only the default Locale.
+  const zhArchivePage2Path = path.join(distDir, 'zh', 'archive', 'page', '2', 'index.html');
+  const html = readFileSync(zhArchivePage2Path, 'utf8');
+
+  expect(html).toContain('English Source Note');
+  expect(html).toContain('href="/en/posts/english-source-note/"');
+  expect(html).toContain('>EN</p>');
+});
+
+test('the en source post builds its own post page under /en/', () => {
+  const enPostPath = path.join(distDir, 'en', 'posts', 'english-source-note', 'index.html');
+
+  expect(existsSync(enPostPath)).toBe(true);
 });
