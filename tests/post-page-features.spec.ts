@@ -71,7 +71,10 @@ test('algorithm-array embeds the Utterances script with a locale-agnostic commen
   const html = readFileSync(algorithmArrayPath, 'utf8');
 
   expect(html).toContain('utteranc.es/client.js');
-  expect(html).toContain('/posts/algorithm-array/');
+  expect(html).toContain('data-repo="panxiao81/new-blog"');
+  // Comment Key matches the legacy Utterances issue-term: no leading slash,
+  // no locale prefix, so existing threads stay attached across locales.
+  expect(html).toContain('data-issue-term="posts/algorithm-array/"');
 });
 
 test('algorithm-array renders pre-rendered KaTeX math output', () => {

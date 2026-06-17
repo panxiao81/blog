@@ -44,7 +44,7 @@ const dictionary = dictionaries[locale];
 const publishedDate = post.data.date.toISOString().slice(0, 10);
 const tocHeadings = headings.filter((h: { depth: number; slug: string; text: string }) => h.depth === 2 || h.depth === 3);
 const hasToc = tocHeadings.length > 0;
-const commentKey = `/posts/${post.id.split('/').pop()?.replace(/\.(md|mdx)$/, '')}/`;
+const commentKey = `posts/${post.id.split('/').pop()?.replace(/\.(md|mdx)$/, '')}/`;
 const licenseLabel = post.data.license ?? dictionary.licenseLabel;
 const licenseUrl = post.data.license ? undefined : defaultLicenseUrl;
 
