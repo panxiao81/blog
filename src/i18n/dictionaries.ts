@@ -154,7 +154,7 @@ export const dictionaries: Record<Locale, SiteDictionary> = {
     aboutExperience: '経歴',
     aboutSkills: 'スキル',
     aboutLanguages: '言語',
-    aboutElsewhere: 'その他',
+    aboutElsewhere: '外部リンク',
     links: 'リンク',
     more: 'その他',
     privacy: 'プライバシー',

@@ -19,6 +19,9 @@ test('builds a zh About page through a shared layout with locale content', () =>
   expect(html).toContain('lang="zh"');
   expect(html).toContain('<title>关于 | Xiao Pan</title>');
   expect(html).toContain('潘瀟');
+  // A frontmatter-driven section renders (Experience/Skills), not just the header.
+  expect(html).toContain('SDLab');
+  expect(html).toContain('RHCSA');
   expect(html).toContain('href="/zh/"');
 });
 
