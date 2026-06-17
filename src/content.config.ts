@@ -2,9 +2,13 @@ import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
+// Tests point this at a fixed fixture set (tests/fixtures/posts) so assertions
+// stay stable when real posts are added or removed. Production leaves it unset.
+const postsBase = process.env.BLOG_CONTENT_DIR ?? './src/content/posts';
+
 const posts = defineCollection({
   loader: glob({
-    base: './src/content/posts',
+    base: postsBase,
     pattern: '**/*.{md,mdx}',
   }),
   schema: z.object({

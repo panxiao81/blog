@@ -1,23 +1,12 @@
-import { execFileSync } from 'node:child_process';
-import { readFileSync, rmSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import vm from 'node:vm';
 
 import { beforeAll, expect, test } from 'vitest';
 
-const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const distDir = path.join(repoRoot, 'dist');
-const zhIndexPath = path.join(distDir, 'zh', 'index.html');
-const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+import { buildFixtureSite, distDir } from './support/site-build';
 
-function buildSite() {
-  execFileSync(npmCommand, ['run', 'build'], {
-    cwd: repoRoot,
-    env: { ...process.env, CI: '1' },
-    stdio: 'pipe',
-  });
-}
+const zhIndexPath = path.join(distDir, 'zh', 'index.html');
 
 function extractThemeScript(html: string) {
   const match = html.match(/<script data-theme-init>([\s\S]*?)<\/script>/);
@@ -155,8 +144,7 @@ function runThemeScript(script: string, options: {
 }
 
 beforeAll(() => {
-  rmSync(distDir, { recursive: true, force: true });
-  buildSite();
+  buildFixtureSite();
 });
 
 test('zh page renders a theme menu with all three theme options', () => {

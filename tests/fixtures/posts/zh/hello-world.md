@@ -1,13 +1,14 @@
 ---
 title: Hello World
-date: 2024-01-02
+date: 2024-03-08
 description: The first source post.
 draft: false
 autoTranslated: false
 tags:
   - intro
+  - journal
 categories:
-  - notes
+  - Notes
 series: []
 ---
 

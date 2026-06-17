@@ -1,13 +1,14 @@
 ---
 title: Rich Post
-date: 2024-01-05
+date: 2024-03-13
 description: A post with headings, code, math, and mermaid for testing.
 draft: false
 autoTranslated: true
 tags:
   - demo
+  - journal
 categories:
-  - notes
+  - Guides
 series: []
 ---
 

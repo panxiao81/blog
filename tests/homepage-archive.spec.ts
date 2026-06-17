@@ -1,26 +1,20 @@
-import { execFileSync } from 'node:child_process';
-import { existsSync, readFileSync, rmSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 
 import { beforeAll, expect, test } from 'vitest';
 
-const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const distDir = path.join(repoRoot, 'dist');
-const zhHomePath = path.join(distDir, 'zh', 'index.html');
-const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+import { buildFixtureSite, distDir } from './support/site-build';
 
-function buildSite() {
-  execFileSync(npmCommand, ['run', 'build'], {
-    cwd: repoRoot,
-    env: { ...process.env, CI: '1' },
-    stdio: 'pipe',
-  });
-}
+// These tests run against the fixed fixture content set (tests/fixtures/posts):
+// 13 zh posts dated 2024-03-13 (newest, "Rich Post") down to 2024-03-01
+// (oldest, "Oldest Fixture Note"). With 10 posts per page, page 1 holds the
+// newest 10 and page 2 holds the last 3 — the first of which is
+// "Fixture Note Seven" (2024-03-03). Adding or removing real posts does not
+// touch these fixtures, so these assertions stay stable.
+const zhHomePath = path.join(distDir, 'zh', 'index.html');
 
 beforeAll(() => {
-  rmSync(distDir, { recursive: true, force: true });
-  buildSite();
+  buildFixtureSite();
 });
 
 test('zh home page renders the most recent post items from typed post content', () => {
@@ -29,10 +23,9 @@ test('zh home page renders the most recent post items from typed post content', 
   const html = readFileSync(zhHomePath, 'utf8');
 
   expect(html).toContain('Rich Post');
-  expect(html).toContain('Second Note');
-  expect(html).toContain('The second source post.');
+  expect(html).toContain('Feature Tour');
   expect(html).toContain('href="/zh/posts/rich-post/"');
-  expect(html).toContain('href="/zh/posts/second-note/"');
+  expect(html).toContain('href="/zh/posts/feature-tour/"');
 });
 
 test('zh archive page renders recent post title, date, and browseable taxonomy labels', () => {
@@ -43,10 +36,10 @@ test('zh archive page renders recent post title, date, and browseable taxonomy l
   const html = readFileSync(zhArchivePath, 'utf8');
 
   expect(html).toContain('<title>归档 | Xiao Pan</title>');
-  expect(html).toContain('Second Note');
-  expect(html).toContain('2024-01-04');
-  expect(html).toContain('href="/zh/tags/update/"');
-  expect(html).toContain('href="/zh/categories/notes/"');
+  expect(html).toContain('Rich Post');
+  expect(html).toContain('2024-03-13');
+  expect(html).toContain('href="/zh/tags/journal/"');
+  expect(html).toContain('href="/zh/categories/Guides/"');
 });
 
 test('en home page shows source-post placeholders in date order when no translations exist', () => {
@@ -54,25 +47,30 @@ test('en home page shows source-post placeholders in date order when no translat
   const html = readFileSync(enHomePath, 'utf8');
 
   expect(html).toContain('Rich Post');
-  expect(html).toContain('Second Note');
-  expect(html).not.toContain('Hello World');
+  expect(html).toContain('Feature Tour');
+  // The oldest post belongs to page 2, so it is absent from the page 1 feed.
+  expect(html).not.toContain('Oldest Fixture Note');
   expect(html).toContain('href="/zh/posts/rich-post/"');
-  expect(html).toContain('href="/zh/posts/second-note/"');
-  expect(html).toContain('中文');
+  expect(html).toContain('href="/zh/posts/feature-tour/"');
+  expect(html).toContain('中文 · Not in this locale yet.');
 });
 
-test('zh home page uses a clean page 1 route and omits the intro blurb on page 2', () => {
+test('zh home page renders a pagination control linking onward to page 2', () => {
   const zhPage2Path = path.join(distDir, 'zh', 'page', '2', 'index.html');
   const page1Html = readFileSync(zhHomePath, 'utf8');
 
   expect(existsSync(zhPage2Path)).toBe(true);
-  expect(page1Html).toContain('这里发布文章、笔记与作品。');
-  expect(page1Html).not.toContain('Hello World');
+  expect(page1Html).toContain('这里发布从原始写作语言出发的文章、笔记与作品。');
+  // The pagination control links forward; the first page-2 post is not on page 1.
+  expect(page1Html).toContain('href="/zh/page/2/"');
+  expect(page1Html).not.toContain('Fixture Note Seven');
 
   const page2Html = readFileSync(zhPage2Path, 'utf8');
 
-  expect(page2Html).not.toContain('这里发布文章、笔记与作品。');
-  expect(page2Html).toContain('Hello World');
+  expect(page2Html).not.toContain('这里发布从原始写作语言出发的文章、笔记与作品。');
+  expect(page2Html).toContain('Fixture Note Seven');
+  // Page 2 links back toward newer posts.
+  expect(page2Html).toContain('rel="prev"');
 });
 
 test('zh archive uses a clean page 1 route and exposes page 2 for older posts', () => {
@@ -81,19 +79,20 @@ test('zh archive uses a clean page 1 route and exposes page 2 for older posts', 
   const page1Html = readFileSync(zhArchivePath, 'utf8');
 
   expect(existsSync(zhArchivePage2Path)).toBe(true);
-  expect(page1Html).not.toContain('Hello World');
+  expect(page1Html).toContain('href="/zh/archive/page/2/"');
+  expect(page1Html).not.toContain('Fixture Note Seven');
 
   const page2Html = readFileSync(zhArchivePage2Path, 'utf8');
 
-  expect(page2Html).toContain('Hello World');
-  expect(page2Html).toContain('2024-01-02');
+  expect(page2Html).toContain('Fixture Note Seven');
+  expect(page2Html).toContain('2024-03-03');
 });
 
 test('en archive shows source-post placeholders linking to zh posts', () => {
   const enArchivePath = path.join(distDir, 'en', 'archive', 'index.html');
   const html = readFileSync(enArchivePath, 'utf8');
 
-  expect(html).toContain('Second Note');
-  expect(html).toContain('href="/zh/posts/second-note/"');
+  expect(html).toContain('Rich Post');
+  expect(html).toContain('href="/zh/posts/rich-post/"');
   expect(html).toContain('中文');
 });

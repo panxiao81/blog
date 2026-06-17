@@ -1,7 +1,7 @@
 ---
 import '../styles/global.css';
 
-import { siteConfig, siteUrl, siteFoundingYear, gtagId, adsenseId, consentStorageKey, locales, localeLabels, themePreferenceStorageKey, type Locale } from '../config/site';
+import { siteConfig, siteUrl, siteFoundingYear, gtagId, adsenseId, consentStorageKey, locales, localeLabels, themePreferenceStorageKey, externalMenuLinks, type Locale } from '../config/site';
 import { dictionaries } from '../i18n/dictionaries';
 
 interface Props {
@@ -73,58 +73,81 @@ const yearRange = currentYear > siteFoundingYear
   </head>
   <body class="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 antialiased">
     <div class="mx-auto flex min-h-screen max-w-4xl flex-col px-6 py-8">
-      <header class="border-b border-zinc-200 dark:border-zinc-800 pb-4">
-        <div class="flex items-center justify-between gap-4">
-          <a class="text-lg font-semibold tracking-tight" href={`/${locale}/`}>{siteConfig.title}</a>
-          <nav aria-label="Main Navigation" class="flex items-center gap-3">
-            <a class="text-sm text-zinc-700 dark:text-zinc-300 underline-offset-4 hover:underline" href={`/${locale}/`}>{dictionary.home}</a>
-            <a class="text-sm text-zinc-700 dark:text-zinc-300 underline-offset-4 hover:underline" href={`/${locale}/archive/`}>{dictionary.archive}</a>
-            <a class="text-sm text-zinc-700 dark:text-zinc-300 underline-offset-4 hover:underline" href={`/${locale}/tags/`}>{dictionary.tags}</a>
-            <a class="text-sm text-zinc-700 dark:text-zinc-300 underline-offset-4 hover:underline" href={`/${locale}/categories/`}>{dictionary.categories}</a>
-            <a class="text-sm text-zinc-700 dark:text-zinc-300 underline-offset-4 hover:underline" href={`/${locale}/series/`}>{dictionary.series}</a>
-            <a class="text-sm text-zinc-700 dark:text-zinc-300 underline-offset-4 hover:underline" href={`/${locale}/about/`}>{dictionary.about}</a>
-            <a class="text-sm text-zinc-700 dark:text-zinc-300 underline-offset-4 hover:underline" href={`/${locale}/links/`}>{dictionary.links}</a>
+      <header class="border-b border-zinc-200 dark:border-zinc-800 pb-5">
+        <div class="flex flex-col gap-4">
+          <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <a class="text-lg font-semibold tracking-tight" href={`/${locale}/`}>{siteConfig.title}</a>
+            <div class="flex flex-wrap items-center gap-3 md:justify-end">
+              <form
+                role="search"
+                aria-label={dictionary.searchLabel}
+                action="https://www.google.com/search"
+                method="get"
+                target="_blank"
+                data-search="desktop"
+                class="hidden md:flex items-center gap-1"
+              >
+                <input type="hidden" name="sitesearch" value={siteUrl} />
+                <input
+                  type="search"
+                  name="q"
+                  placeholder={dictionary.searchPlaceholder}
+                  aria-label={dictionary.searchLabel}
+                  class="w-44 rounded border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 px-2 py-1 text-sm focus:outline-none"
+                />
+              </form>
+              <nav aria-label="Language" class="flex items-center gap-2 text-sm">
+                {locales.map((l) =>
+                  l === locale
+                    ? <span aria-current="page" class="font-semibold text-zinc-900 dark:text-zinc-100">{localeLabels[l]}</span>
+                    : <a href={`/${l}/`} class="text-zinc-500 dark:text-zinc-400 underline-offset-4 hover:underline">{localeLabels[l]}</a>
+                )}
+              </nav>
+              <nav aria-label="Theme" class="inline-flex items-center gap-1 rounded-full border border-zinc-200 p-1 text-sm dark:border-zinc-800">
+                <button type="button" data-theme="light" class="rounded-full px-2.5 py-1 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100">{dictionary.themeLight}</button>
+                <button type="button" data-theme="dark" class="rounded-full px-2.5 py-1 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100">{dictionary.themeDark}</button>
+                <button type="button" data-theme="system" class="rounded-full px-2.5 py-1 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100">{dictionary.themeSystem}</button>
+              </nav>
+              <button
+                type="button"
+                data-search="mobile-toggle"
+                aria-expanded="false"
+                aria-controls="mobile-search"
+                aria-label={dictionary.searchToggleLabel}
+                class="md:hidden p-1 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
+              >
+                &#x1F50D;
+              </button>
+            </div>
+          </div>
+          <nav aria-label="Main Navigation" class="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
+            <a class="text-zinc-700 dark:text-zinc-300 underline-offset-4 hover:underline" href={`/${locale}/archive/`}>{dictionary.archive}</a>
+            <a class="text-zinc-700 dark:text-zinc-300 underline-offset-4 hover:underline" href={`/${locale}/about/`}>{dictionary.about}</a>
+            <a class="text-zinc-700 dark:text-zinc-300 underline-offset-4 hover:underline" href={`/${locale}/series/`}>{dictionary.series}</a>
+            <a class="text-zinc-700 dark:text-zinc-300 underline-offset-4 hover:underline" href={`/${locale}/categories/`}>{dictionary.categories}</a>
+            <details data-more-menu class="relative">
+              <summary class="list-none cursor-pointer text-zinc-700 dark:text-zinc-300 underline-offset-4 hover:underline [&::-webkit-details-marker]:hidden">{dictionary.more}</summary>
+              <div class="absolute left-0 top-full z-10 mt-2 min-w-56 rounded-md border border-zinc-200 bg-white p-2 shadow-lg dark:border-zinc-800 dark:bg-zinc-950">
+                <a class="block rounded px-2 py-1.5 text-zinc-700 dark:text-zinc-300 underline-offset-4 hover:bg-zinc-100 hover:underline dark:hover:bg-zinc-900" href={`/${locale}/series/`}>{dictionary.series}</a>
+                <a class="block rounded px-2 py-1.5 text-zinc-700 dark:text-zinc-300 underline-offset-4 hover:bg-zinc-100 hover:underline dark:hover:bg-zinc-900" href={`/${locale}/categories/`}>{dictionary.categories}</a>
+                <a class="block rounded px-2 py-1.5 text-zinc-700 dark:text-zinc-300 underline-offset-4 hover:bg-zinc-100 hover:underline dark:hover:bg-zinc-900" href={`/${locale}/links/`}>{dictionary.links}</a>
+                <div class="my-2 border-t border-zinc-200 dark:border-zinc-800"></div>
+                {externalMenuLinks.map((link) => (
+                  <a
+                    class="flex items-center justify-between gap-3 rounded px-2 py-1.5 text-zinc-700 dark:text-zinc-300 underline-offset-4 hover:bg-zinc-100 hover:underline dark:hover:bg-zinc-900"
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span>{link.label}</span>
+                    {link.chineseOnly && (
+                      <span class="shrink-0 rounded-full border border-zinc-200 px-2 py-0.5 text-[11px] text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">{dictionary.chineseOnly}</span>
+                    )}
+                  </a>
+                ))}
+              </div>
+            </details>
           </nav>
-          <nav aria-label="Language" class="flex items-center gap-2 text-sm">
-            {locales.map((l) =>
-              l === locale
-                ? <span aria-current="page" class="font-semibold text-zinc-900 dark:text-zinc-100">{localeLabels[l]}</span>
-                : <a href={`/${l}/`} class="text-zinc-500 dark:text-zinc-400 underline-offset-4 hover:underline">{localeLabels[l]}</a>
-            )}
-          </nav>
-          <nav aria-label="Theme" class="flex items-center gap-1 text-sm">
-            <button type="button" data-theme="light" class="px-2 py-1 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100">{dictionary.themeLight}</button>
-            <button type="button" data-theme="dark" class="px-2 py-1 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100">{dictionary.themeDark}</button>
-            <button type="button" data-theme="system" class="px-2 py-1 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100">{dictionary.themeSystem}</button>
-          </nav>
-          <form
-            role="search"
-            aria-label={dictionary.searchLabel}
-            action="https://www.google.com/search"
-            method="get"
-            target="_blank"
-            data-search="desktop"
-            class="hidden sm:flex items-center gap-1"
-          >
-            <input type="hidden" name="sitesearch" value={siteUrl} />
-            <input
-              type="search"
-              name="q"
-              placeholder={dictionary.searchPlaceholder}
-              aria-label={dictionary.searchLabel}
-              class="w-40 rounded border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 px-2 py-1 text-sm focus:outline-none"
-            />
-          </form>
-          <button
-            type="button"
-            data-search="mobile-toggle"
-            aria-expanded="false"
-            aria-controls="mobile-search"
-            aria-label={dictionary.searchToggleLabel}
-            class="sm:hidden p-1 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
-          >
-            &#x1F50D;
-          </button>
         </div>
       </header>
       <main class="flex-1 py-10">
@@ -166,6 +189,27 @@ const yearRange = currentYear > siteFoundingYear
           const expanded = toggle.getAttribute('aria-expanded') === 'true';
           panel.hidden = expanded;
           toggle.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+        });
+      })();
+    </script>
+    <script data-more-menu is:inline>
+      (function () {
+        const menus = Array.from(document.querySelectorAll('[data-more-menu]'));
+        if (!menus.length) return;
+
+        document.addEventListener('click', function (event) {
+          if (!(event.target instanceof Node)) return;
+          menus.forEach(function (menu) {
+            if (menu.contains(event.target)) return;
+            menu.removeAttribute('open');
+          });
+        });
+
+        document.addEventListener('keydown', function (event) {
+          if (event.key !== 'Escape') return;
+          menus.forEach(function (menu) {
+            menu.removeAttribute('open');
+          });
         });
       })();
     </script>

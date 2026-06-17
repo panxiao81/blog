@@ -1,23 +1,12 @@
-import { execFileSync } from 'node:child_process';
-import { existsSync, readFileSync, rmSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import vm from 'node:vm';
 
 import { beforeAll, expect, test } from 'vitest';
 
-const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const distDir = path.join(repoRoot, 'dist');
-const rootIndexPath = path.join(distDir, 'index.html');
-const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+import { buildFixtureSite, distDir } from './support/site-build';
 
-function buildSite() {
-  execFileSync(npmCommand, ['run', 'build'], {
-    cwd: repoRoot,
-    env: { ...process.env, CI: '1' },
-    stdio: 'pipe',
-  });
-}
+const rootIndexPath = path.join(distDir, 'index.html');
 
 function extractRedirectScript(html: string) {
   const match = html.match(/<script>([\s\S]*?)<\/script>/);
@@ -63,8 +52,7 @@ function runRedirectScript(script: string, options: {
 }
 
 beforeAll(() => {
-  rmSync(distDir, { recursive: true, force: true });
-  buildSite();
+  buildFixtureSite();
 });
 
 test('root redirect prefers a saved locale choice over browser language', () => {

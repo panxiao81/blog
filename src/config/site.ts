@@ -18,7 +18,22 @@ export const siteConfig = {
   description: 'Plain multilingual writing.',
 } as const;
 
-export const postsPerPage = 2 as const;
+export type ExternalMenuLink = {
+  label: string;
+  href: string;
+  chineseOnly?: boolean;
+};
+
+export const externalMenuLinks: ExternalMenuLink[] = [
+  { label: 'Debian 快速入门指南', href: 'https://blog.ddupan.top/Chinaskills-Debian', chineseOnly: true },
+  { label: 'TLPI 笔记', href: 'https://panxiao81.github.io/learn-tlpi/', chineseOnly: true },
+  { label: 'CS:APP 笔记', href: 'https://panxiao81.github.io/learn-csapp', chineseOnly: true },
+  { label: 'Gitea', href: 'https://git.ddupan.top/panxiao81/' },
+  { label: 'GitHub', href: 'https://github.com/panxiao81/new-blog' },
+  { label: 'E5自动更新', href: 'https://e5renew.ddupan.top', chineseOnly: true },
+];
+
+export const postsPerPage = 10 as const;
 
 export const siteUrl: string = import.meta.env.SITE || '';
 

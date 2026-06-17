@@ -1,6 +1,7 @@
 ---
 import SiteShell from '../../layouts/SiteShell.astro';
 import AdUnit from '../../components/AdUnit.astro';
+import Pagination from '../../components/Pagination.astro';
 import { getLocalePostListItems } from '../../content/posts';
 import { adsenseListSlot, localeLabels, locales, postsPerPage, type Locale } from '../../config/site';
 import { dictionaries } from '../../i18n/dictionaries';
@@ -11,14 +12,16 @@ export function getStaticPaths() {
 
 const locale = Astro.params.locale as Locale;
 const dictionary = dictionaries[locale];
-const posts = (await getLocalePostListItems(locale)).slice(0, postsPerPage);
+const allPosts = await getLocalePostListItems(locale);
+const posts = allPosts.slice(0, postsPerPage);
+const totalPages = Math.ceil(allPosts.length / postsPerPage);
 ---
 
 <SiteShell locale={locale} pageTitle={dictionary.home}>
   <section class="space-y-4">
-    <p class="text-sm font-medium uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-400">{dictionary.home}</p>
-    <h1 class="text-4xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50">{dictionary.intro}</h1>
-    <p class="max-w-2xl text-base leading-7 text-zinc-700 dark:text-zinc-300">
+    <p class="text-sm font-medium uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-400">{dictionary.homeKicker}</p>
+    <h1 class="max-w-3xl text-4xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50">{dictionary.intro}</h1>
+    <p class="max-w-3xl text-base leading-7 text-zinc-700 dark:text-zinc-300">
       {dictionary.footer}
     </p>
   </section>
@@ -30,7 +33,7 @@ const posts = (await getLocalePostListItems(locale)).slice(0, postsPerPage);
           <a class="underline-offset-4 hover:underline" href={`/${sourceLocale}/posts/${slug}/`}>{entry.data.title}</a>
         </h2>
         {kind === 'placeholder' && (
-          <p class="text-sm text-zinc-500 dark:text-zinc-400">{localeLabels[sourceLocale]}</p>
+          <p class="text-sm text-zinc-500 dark:text-zinc-400">{localeLabels[sourceLocale]} · {dictionary.placeholderNotice}</p>
         )}
         {entry.data.description && (
           <p class="text-base leading-7 text-zinc-700 dark:text-zinc-300">{entry.data.description}</p>
@@ -38,5 +41,6 @@ const posts = (await getLocalePostListItems(locale)).slice(0, postsPerPage);
       </article>
     ))}
   </section>
+  <Pagination locale={locale} basePath={`/${locale}`} currentPage={1} totalPages={totalPages} />
   <AdUnit adSlot={adsenseListSlot} class="mt-10" />
 </SiteShell>

@@ -1,24 +1,27 @@
 ---
-import { getTaxonomyRouteEntries, type PostRouteEntry } from '../../../../../content/posts';
+import { getTaxonomyRouteEntries, getTaxonomyTermParam, type PostRouteEntry } from '../../../../../content/posts';
 import { adsenseListSlot, postsPerPage, type Locale } from '../../../../../config/site';
 import { dictionaries } from '../../../../../i18n/dictionaries';
 import SiteShell from '../../../../../layouts/SiteShell.astro';
 import AdUnit from '../../../../../components/AdUnit.astro';
+import Pagination from '../../../../../components/Pagination.astro';
 
 export async function getStaticPaths() {
   const entries = await getTaxonomyRouteEntries('tags');
   const paths = [];
 
-  for (const { locale, term, param, posts } of entries) {
+  for (const { locale, term, posts } of entries) {
     const totalPages = Math.ceil(posts.length / postsPerPage);
 
     for (let page = 2; page <= totalPages; page += 1) {
       paths.push({
-        params: { locale, term: param, page: String(page) },
+        params: { locale, term, page: String(page) },
         props: {
           locale,
           term,
           posts: posts.slice((page - 1) * postsPerPage, page * postsPerPage),
+          currentPage: page,
+          totalPages,
         },
       });
     }
@@ -27,13 +30,16 @@ export async function getStaticPaths() {
   return paths;
 }
 
-const { locale, term, posts } = Astro.props as {
+const { locale, term, posts, currentPage, totalPages } = Astro.props as {
   locale: Locale;
   term: string;
   posts: PostRouteEntry[];
+  currentPage: number;
+  totalPages: number;
 };
 const dictionary = dictionaries[locale];
 const heading = `${dictionary.tagLabel}: ${term}`;
+const basePath = `/${locale}/tags/${getTaxonomyTermParam(term)}`;
 ---
 
 <SiteShell locale={locale} pageTitle={heading}>
@@ -55,6 +61,7 @@ const heading = `${dictionary.tagLabel}: ${term}`;
     ) : (
       <p class="text-base text-zinc-600 dark:text-zinc-400">{dictionary.emptyTaxonomy}</p>
     )}
+    <Pagination locale={locale} basePath={basePath} currentPage={currentPage} totalPages={totalPages} />
     <AdUnit adSlot={adsenseListSlot} class="mt-6" />
   </section>
 </SiteShell>

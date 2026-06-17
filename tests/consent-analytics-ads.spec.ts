@@ -1,33 +1,18 @@
-import { execFileSync } from 'node:child_process';
-import { readFileSync, rmSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 
 import { beforeAll, expect, test } from 'vitest';
 
-const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const distDir = path.join(repoRoot, 'dist');
-const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
-
-function buildSite() {
-  execFileSync(npmCommand, ['run', 'build'], {
-    cwd: repoRoot,
-    env: {
-      ...process.env,
-      CI: '1',
-      SITE: 'https://example.com',
-      GTAG_ID: 'G-TESTID1234',
-      ADSENSE_ID: 'ca-pub-1234567890123456',
-      ADSENSE_LIST_SLOT: '1111111111',
-      ADSENSE_POST_SLOT: '2222222222',
-    },
-    stdio: 'pipe',
-  });
-}
+import { buildFixtureSite, distDir } from './support/site-build';
 
 beforeAll(() => {
-  rmSync(distDir, { recursive: true, force: true });
-  buildSite();
+  buildFixtureSite({
+    SITE: 'https://example.com',
+    GTAG_ID: 'G-TESTID1234',
+    ADSENSE_ID: 'ca-pub-1234567890123456',
+    ADSENSE_LIST_SLOT: '1111111111',
+    ADSENSE_POST_SLOT: '2222222222',
+  });
 });
 
 test('zh home page has consent banner element', () => {

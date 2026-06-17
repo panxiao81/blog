@@ -1,6 +1,7 @@
 ---
 import SiteShell from '../../layouts/SiteShell.astro';
 import AdUnit from '../../components/AdUnit.astro';
+import Pagination from '../../components/Pagination.astro';
 import { getLocalePostListItems, getTaxonomyTermHref } from '../../content/posts';
 import { adsenseListSlot, localeLabels, locales, postsPerPage, type Locale } from '../../config/site';
 import { dictionaries } from '../../i18n/dictionaries';
@@ -11,7 +12,9 @@ export function getStaticPaths() {
 
 const locale = Astro.params.locale as Locale;
 const dictionary = dictionaries[locale];
-const posts = (await getLocalePostListItems(locale)).slice(0, postsPerPage);
+const allPosts = await getLocalePostListItems(locale);
+const posts = allPosts.slice(0, postsPerPage);
+const totalPages = Math.ceil(allPosts.length / postsPerPage);
 ---
 
 <SiteShell locale={locale} pageTitle={dictionary.archive}>
@@ -62,6 +65,7 @@ const posts = (await getLocalePostListItems(locale)).slice(0, postsPerPage);
         )}
       </article>
     ))}
+    <Pagination locale={locale} basePath={`/${locale}/archive`} currentPage={1} totalPages={totalPages} />
     <AdUnit adSlot={adsenseListSlot} class="mt-6" />
   </section>
 </SiteShell>

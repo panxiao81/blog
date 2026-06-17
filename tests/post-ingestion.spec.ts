@@ -1,27 +1,17 @@
-import { execFileSync } from 'node:child_process';
-import { existsSync, readFileSync, rmSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 
 import { beforeAll, expect, test } from 'vitest';
 
-const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const distDir = path.join(repoRoot, 'dist');
+import { buildFixtureSite, distDir } from './support/site-build';
+
+// Runs against the fixed fixture content set (tests/fixtures/posts).
 const zhPostPath = path.join(distDir, 'zh', 'posts', 'hello-world', 'index.html');
 const enPostPath = path.join(distDir, 'en', 'posts', 'hello-world', 'index.html');
-const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
-
-function buildSite() {
-  execFileSync(npmCommand, ['run', 'build'], {
-    cwd: repoRoot,
-    env: { ...process.env, CI: '1' },
-    stdio: 'pipe',
-  });
-}
+const nestedTitlePostPath = path.join(distDir, 'zh', 'posts', 'algorithm-array', 'index.html');
 
 beforeAll(() => {
-  rmSync(distDir, { recursive: true, force: true });
-  buildSite();
+  buildFixtureSite();
 });
 
 test('builds a zh source post to a locale-prefixed post route', () => {
@@ -31,9 +21,18 @@ test('builds a zh source post to a locale-prefixed post route', () => {
 
   expect(html).toContain('lang="zh"');
   expect(html).toContain('Hello World');
-  expect(html).toContain('2024-01-02');
+  expect(html).toContain('2024-03-08');
 });
 
 test('does not generate translated post routes that do not exist', () => {
   expect(existsSync(enPostPath)).toBe(false);
+});
+
+test('builds a source post with a CJK title to its derived zh route', () => {
+  expect(existsSync(nestedTitlePostPath)).toBe(true);
+
+  const html = readFileSync(nestedTitlePostPath, 'utf8');
+
+  expect(html).toContain('算法与数据结构 -- 线性表（2）-- 顺序表');
+  expect(html).toContain('2024-03-11');
 });

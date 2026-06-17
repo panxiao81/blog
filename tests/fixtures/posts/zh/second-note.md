@@ -1,13 +1,14 @@
 ---
 title: Second Note
-date: 2024-01-04
+date: 2024-03-07
 description: The second source post.
 draft: false
 autoTranslated: false
 tags:
   - update
+  - journal
 categories:
-  - notes
+  - Notes
 series: []
 ---
 
