@@ -10,6 +10,11 @@ export type SiteDictionary = {
   categoryLabel: string;
   seriesLabel: string;
   about: string;
+  aboutFocus: string;
+  aboutExperience: string;
+  aboutSkills: string;
+  aboutLanguages: string;
+  aboutElsewhere: string;
   links: string;
   more: string;
   privacy: string;
@@ -53,6 +58,11 @@ export const dictionaries: Record<Locale, SiteDictionary> = {
     categoryLabel: 'Category',
     seriesLabel: 'Series',
     about: 'About',
+    aboutFocus: 'Focus',
+    aboutExperience: 'Experience',
+    aboutSkills: 'Skills',
+    aboutLanguages: 'Languages',
+    aboutElsewhere: 'Elsewhere',
     links: 'Links',
     more: 'More',
     privacy: 'Privacy',
@@ -94,6 +104,11 @@ export const dictionaries: Record<Locale, SiteDictionary> = {
     categoryLabel: '分类',
     seriesLabel: '系列',
     about: '关于',
+    aboutFocus: '关注方向',
+    aboutExperience: '经历',
+    aboutSkills: '技能',
+    aboutLanguages: '语言',
+    aboutElsewhere: '在别处',
     links: '链接',
     more: '更多',
     privacy: '隐私',
@@ -134,7 +149,12 @@ export const dictionaries: Record<Locale, SiteDictionary> = {
     tagLabel: 'タグ',
     categoryLabel: 'カテゴリー',
     seriesLabel: 'シリーズ',
-    about: 'このサイトについて',
+    about: 'プロフィール',
+    aboutFocus: '関心',
+    aboutExperience: '経歴',
+    aboutSkills: 'スキル',
+    aboutLanguages: '言語',
+    aboutElsewhere: 'その他',
     links: 'リンク',
     more: 'その他',
     privacy: 'プライバシー',
