@@ -1,0 +1,196 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-06-07T00:00:00Z",
+  "title": "Design System: Xiao Pan",
+  "extensions": {
+    "colorMeta": {
+      "carbon-ink": {
+        "role": "primary",
+        "displayName": "Carbon Ink",
+        "canonical": "#18181b",
+        "tonalRamp": ["#09090b", "#18181b", "#27272a", "#3f3f46", "#71717a", "#a1a1aa", "#d4d4d8", "#f4f4f5"]
+      },
+      "porcelain-surface": {
+        "role": "neutral",
+        "displayName": "Porcelain Surface",
+        "canonical": "#ffffff",
+        "tonalRamp": ["#18181b", "#27272a", "#3f3f46", "#71717a", "#a1a1aa", "#d4d4d8", "#f4f4f5", "#ffffff"]
+      },
+      "soft-hover": {
+        "role": "neutral",
+        "displayName": "Soft Hover",
+        "canonical": "#f4f4f5",
+        "tonalRamp": ["#18181b", "#27272a", "#3f3f46", "#52525b", "#71717a", "#d4d4d8", "#e4e4e7", "#f4f4f5"]
+      },
+      "line-subtle": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "#e4e4e7",
+        "tonalRamp": ["#18181b", "#27272a", "#3f3f46", "#52525b", "#71717a", "#a1a1aa", "#d4d4d8", "#e4e4e7"]
+      },
+      "body-slate": {
+        "role": "neutral",
+        "displayName": "Body Slate",
+        "canonical": "#3f3f46",
+        "tonalRamp": ["#09090b", "#18181b", "#27272a", "#3f3f46", "#52525b", "#71717a", "#a1a1aa", "#d4d4d8"]
+      },
+      "quiet-caption": {
+        "role": "neutral",
+        "displayName": "Quiet Caption",
+        "canonical": "#71717a",
+        "tonalRamp": ["#18181b", "#27272a", "#3f3f46", "#52525b", "#71717a", "#a1a1aa", "#d4d4d8", "#f4f4f5"]
+      },
+      "night-surface": {
+        "role": "neutral",
+        "displayName": "Night Surface",
+        "canonical": "#09090b",
+        "tonalRamp": ["#09090b", "#18181b", "#27272a", "#3f3f46", "#52525b", "#71717a", "#a1a1aa", "#f4f4f5"]
+      },
+      "night-field": {
+        "role": "neutral",
+        "displayName": "Night Field",
+        "canonical": "#18181b",
+        "tonalRamp": ["#09090b", "#18181b", "#27272a", "#3f3f46", "#52525b", "#71717a", "#a1a1aa", "#f4f4f5"]
+      },
+      "night-copy": {
+        "role": "neutral",
+        "displayName": "Night Copy",
+        "canonical": "#f4f4f5",
+        "tonalRamp": ["#18181b", "#27272a", "#3f3f46", "#71717a", "#a1a1aa", "#d4d4d8", "#e4e4e7", "#f4f4f5"]
+      },
+      "night-border": {
+        "role": "neutral",
+        "displayName": "Night Border",
+        "canonical": "#27272a",
+        "tonalRamp": ["#09090b", "#18181b", "#27272a", "#3f3f46", "#52525b", "#71717a", "#a1a1aa", "#d4d4d8"]
+      },
+      "signal-amber": {
+        "role": "tertiary",
+        "displayName": "Signal Amber",
+        "canonical": "#92400e",
+        "tonalRamp": ["#451a03", "#78350f", "#92400e", "#b45309", "#d97706", "#f59e0b", "#fcd34d", "#fde68a"]
+      },
+      "signal-amber-bg": {
+        "role": "tertiary",
+        "displayName": "Signal Amber Wash",
+        "canonical": "#fffbeb",
+        "tonalRamp": ["#451a03", "#78350f", "#92400e", "#b45309", "#d97706", "#f59e0b", "#fde68a", "#fffbeb"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Page-level headings and the clearest authored entry points." },
+      "headline": { "displayName": "Headline", "purpose": "Post list titles, section leaders, and strong secondary headings." },
+      "title": { "displayName": "Title", "purpose": "Site title, compact emphasis, and navigation-adjacent emphasis." },
+      "body": { "displayName": "Body", "purpose": "Descriptions, summaries, and prose-adjacent interface copy." },
+      "label": { "displayName": "Label", "purpose": "Occasional uppercase markers and sparse orientation labels." }
+    },
+    "shadows": [
+      {
+        "name": "utility-lift",
+        "value": "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1)",
+        "purpose": "Temporary overlays such as the consent banner."
+      }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Used for explicit commit moments such as consent acceptance.",
+      "html": "<button class=\"ds-btn-primary\">Accept</button>",
+      "css": ".ds-btn-primary{background:#18181b;color:#ffffff;padding:8px 16px;border:0;border-radius:4px;font:500 14px/1.43 system-ui,sans-serif;cursor:pointer;transition:background-color 150ms ease-out;}.ds-btn-primary:hover{background:#3f3f46;}.ds-btn-primary:focus-visible{outline:2px solid #18181b;outline-offset:2px;}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Used for decliners, quiet actions, and reversible choices.",
+      "html": "<button class=\"ds-btn-secondary\">Decline</button>",
+      "css": ".ds-btn-secondary{background:#ffffff;color:#3f3f46;padding:8px 16px;border:1px solid #e4e4e7;border-radius:4px;font:500 14px/1.43 system-ui,sans-serif;cursor:pointer;transition:background-color 150ms ease-out,border-color 150ms ease-out;}.ds-btn-secondary:hover{background:#f4f4f5;}.ds-btn-secondary:focus-visible{outline:2px solid #18181b;outline-offset:2px;}"
+    },
+    {
+      "name": "Search Input",
+      "kind": "input",
+      "refersTo": "input-search",
+      "description": "Compact search field that stays quiet beside content-first navigation.",
+      "html": "<label class=\"ds-search-wrap\"><span class=\"ds-search-label\">Search</span><input class=\"ds-search\" type=\"search\" placeholder=\"Search this site\" /></label>",
+      "css": ".ds-search-wrap{display:grid;gap:4px;max-width:240px;font:400 14px/1.43 system-ui,sans-serif;color:#3f3f46;}.ds-search-label{color:#71717a;}.ds-search{padding:4px 8px;border:1px solid #e4e4e7;border-radius:4px;background:#ffffff;color:#18181b;font:400 14px/1.43 system-ui,sans-serif;}.ds-search::placeholder{color:#71717a;}.ds-search:focus-visible{outline:2px solid #18181b;outline-offset:2px;}"
+    },
+    {
+      "name": "Main Navigation Link",
+      "kind": "nav",
+      "refersTo": "nav-link",
+      "description": "Text-led navigation that behaves like part of the reading surface, not a separate control panel.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-link\" href=\"#\">Archive</a></nav>",
+      "css": ".ds-nav{display:flex;align-items:center;gap:12px;}.ds-nav-link{color:#3f3f46;font:400 14px/1.43 system-ui,sans-serif;text-decoration:none;text-underline-offset:4px;transition:color 150ms ease-out,text-decoration-color 150ms ease-out;}.ds-nav-link:hover{color:#18181b;text-decoration:underline;}.ds-nav-link:focus-visible{outline:2px solid #18181b;outline-offset:2px;}"
+    },
+    {
+      "name": "Translation Notice",
+      "kind": "custom",
+      "refersTo": "notice-translation",
+      "description": "A disclosure pattern for auto-translated or source-language notes.",
+      "html": "<p class=\"ds-translation\">This post was translated automatically.</p>",
+      "css": ".ds-translation{margin:0;padding:8px 12px;border:1px solid #fde68a;border-radius:4px;background:#fffbeb;color:#92400e;font:400 14px/1.43 system-ui,sans-serif;}.ds-translation a{color:inherit;text-decoration:underline;text-underline-offset:4px;}"
+    },
+    {
+      "name": "Consent Banner",
+      "kind": "custom",
+      "refersTo": "banner-consent",
+      "description": "Temporary overlay for privacy choices with flat styling plus utility lift.",
+      "html": "<section class=\"ds-consent\"><p class=\"ds-consent-copy\">This site uses optional analytics and ads.</p><div class=\"ds-consent-actions\"><button class=\"ds-btn-primary\">Accept</button><button class=\"ds-btn-secondary\">Decline</button></div></section>",
+      "css": ".ds-consent{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;padding:16px 24px;border-top:1px solid #e4e4e7;background:#ffffff;box-shadow:0 10px 15px -3px rgba(0,0,0,0.1),0 4px 6px -4px rgba(0,0,0,0.1);font:400 14px/1.43 system-ui,sans-serif;color:#3f3f46;}.ds-consent-copy{margin:0;max-width:42ch;}.ds-consent-actions{display:flex;gap:12px;}.ds-btn-primary{background:#18181b;color:#ffffff;padding:8px 16px;border:0;border-radius:4px;font:500 14px/1.43 system-ui,sans-serif;cursor:pointer;transition:background-color 150ms ease-out;}.ds-btn-primary:hover{background:#3f3f46;}.ds-btn-primary:focus-visible,.ds-btn-secondary:focus-visible{outline:2px solid #18181b;outline-offset:2px;}.ds-btn-secondary{background:#ffffff;color:#3f3f46;padding:8px 16px;border:1px solid #e4e4e7;border-radius:4px;font:500 14px/1.43 system-ui,sans-serif;cursor:pointer;transition:background-color 150ms ease-out;}.ds-btn-secondary:hover{background:#f4f4f5;}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Precise Notebook",
+    "overview": "This system is a text-first monochrome interface with technical crispness and almost no theatrical styling. The page should read like a deliberately kept notebook: clear page edges, strong typographic hierarchy, quiet controls, and just enough state treatment to keep navigation, search, and consent readable without competing with the writing.\n\nThe visual language rejects the feel of a SaaS template. There are no gradients, no dashboard-like cards, no growth-product accents, and no decorative brand gestures trying to manufacture personality. Personality comes from precision, multilingual care, and the confidence to let plain surfaces stay plain.",
+    "keyCharacteristics": [
+      "Author-first hierarchy with writing before interface chrome.",
+      "Carbon-and-porcelain neutrals as the default visual voice.",
+      "One sans-serif family doing all the work through scale, weight, and tracking.",
+      "Flat reading surfaces with utility lift reserved for overlays and temporary UI.",
+      "Low-distraction controls that stay readable in light and dark mode."
+    ],
+    "rules": [
+      {
+        "name": "The One Warm Note Rule",
+        "body": "Warm color is for disclosure, not brand theater. If amber starts appearing in ordinary links, buttons, or headings, the system has lost its restraint.",
+        "section": "colors"
+      },
+      {
+        "name": "The Single Voice Rule",
+        "body": "Do not introduce a second display face or a mono UI voice just to signal \"technical.\" Precision comes from composition, not costume.",
+        "section": "typography"
+      },
+      {
+        "name": "The Locale First Rule",
+        "body": "Any future font expansion must protect multilingual readability before it chases personality. Chinese, Japanese, and English text should feel equally intentional, not like one language got the real design and the others inherited fallback styling.",
+        "section": "typography"
+      },
+      {
+        "name": "The Overlay Only Rule",
+        "body": "If a static content section needs a shadow to read correctly, the layout is under-resolved.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do keep the default surface monochrome: white or near-black backgrounds, carbon headings, slate body copy, and 1px zinc borders.",
+      "Do use the primary filled action style only when the interface is asking for a decision, as in consent acceptance or a similarly explicit commit moment.",
+      "Do separate long-form sections with space and hairlines before you reach for containers.",
+      "Do reserve uppercase tracked labels for occasional orientation, not as a repeated section habit.",
+      "Do treat locale-aware readability as a design requirement, especially when changing type scale, line length, or future font stacks."
+    ],
+    "donts": [
+      "Don't make the site feel like a SaaS template. No dashboard cards, no conversion-driven CTA styling, no gradients, no product-marketing hero tricks.",
+      "Don't introduce a second display font or a mono UI layer just to signal technical credibility.",
+      "Don't turn prose surfaces into nested panels or card grids when a stack with spacing and borders would read more clearly.",
+      "Don't spread the amber disclosure palette into ordinary navigation, metadata, or buttons.",
+      "Don't use shadows as routine separation. If everything is lifted, nothing is quiet."
+    ]
+  }
+}
