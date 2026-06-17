@@ -37,7 +37,10 @@ export const postsPerPage = 10 as const;
 
 export const siteUrl: string = import.meta.env.SITE || '';
 
-export const utterancesRepo = 'panxiao81/blog' as const;
+// Comments live in the legacy repo's GitHub issues (created by Utterances on the
+// old site), so existing threads stay attached. The Comment Key below matches
+// the old issue-term format: `posts/{slug}/`, no leading slash, locale-agnostic.
+export const utterancesRepo = 'panxiao81/new-blog' as const;
 export const defaultLicenseUrl = 'https://creativecommons.org/licenses/by-sa/4.0/' as const;
 export const siteFoundingYear = 2024 as const;
 
