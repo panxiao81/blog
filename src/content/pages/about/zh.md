@@ -33,7 +33,7 @@ links:
   - label: GitHub
     href: https://github.com/panxiao81
   - label: 邮箱
-    href: mailto:pan.xiao.qa0@naist.ac.jp
+    href: mailto:pan-xiao@live.cn
 ---
 
 我喜欢待在软件和支撑它运行的系统之间——动手造、跑起来、折腾坏，再把学到的东西记下来。目前我在 NAIST 的软件设计与分析实验室（SDLab）读书，此前在国内学习软件工程与计算机网络。我持有 RHCSA 认证，早期的不少文章都是在真实环境里留下的实操笔记。

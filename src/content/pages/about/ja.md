@@ -33,7 +33,7 @@ links:
   - label: GitHub
     href: https://github.com/panxiao81
   - label: メール
-    href: mailto:pan.xiao.qa0@naist.ac.jp
+    href: mailto:pan-xiao@live.cn
 ---
 
 ソフトウェアと、それを動かすシステムのあいだにいるのが好きです。作って、動かして、壊して、学んだことを書き留めています。現在は NAIST のソフトウェア設計学研究室（SDLab）に在籍し、来日前は中国でソフトウェア工学とコンピュータネットワークを学びました。RHCSA を取得しており、初期の記事の多くは実環境で残した実践メモです。

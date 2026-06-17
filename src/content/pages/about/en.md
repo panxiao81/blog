@@ -33,7 +33,7 @@ links:
   - label: GitHub
     href: https://github.com/panxiao81
   - label: Email
-    href: mailto:pan.xiao.qa0@naist.ac.jp
+    href: mailto:pan-xiao@live.cn
 ---
 
 I like living between software and the systems that run it — building things, running them, breaking them, and writing down what I learn along the way. I'm currently at the Software Design and Analysis Laboratory (SDLab) at NAIST, after studying software engineering and networking back in China. I hold the RHCSA certification, and a lot of my earlier writing is hands-on notes from real systems.
