@@ -8,7 +8,7 @@ const formatFlagIndex = args.indexOf('--format');
 const format = formatFlagIndex === -1 ? 'md' : args[formatFlagIndex + 1];
 
 if (!slug) {
-  console.error('Usage: npm run new-post -- <slug> [--format md|mdx]');
+  console.error('Usage: pnpm new-post <slug> [--format md|mdx]');
   process.exit(1);
 }
 

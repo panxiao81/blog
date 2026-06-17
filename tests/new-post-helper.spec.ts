@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { afterEach, expect, test } from 'vitest';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+const pnpmCommand = process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm';
 const slug = 'tdd-source-post';
 const mdxSlug = 'tdd-mdx-post';
 const markdownPostPath = path.join(repoRoot, 'src', 'content', 'posts', 'zh', `${slug}.md`);
@@ -20,7 +20,7 @@ afterEach(() => {
 });
 
 test('creates a zh source post in markdown by default', () => {
-  execFileSync(npmCommand, ['run', 'new-post', '--', slug], {
+  execFileSync(pnpmCommand, ['run', 'new-post', slug], {
     cwd: repoRoot,
     env: { ...process.env, CI: '1' },
     stdio: 'pipe',
@@ -40,7 +40,7 @@ test('creates a zh source post in markdown by default', () => {
 });
 
 test('creates a zh source post in mdx when requested', () => {
-  execFileSync(npmCommand, ['run', 'new-post', '--', mdxSlug, '--format', 'mdx'], {
+  execFileSync(pnpmCommand, ['run', 'new-post', mdxSlug, '--format', 'mdx'], {
     cwd: repoRoot,
     env: { ...process.env, CI: '1' },
     stdio: 'pipe',
