@@ -7,6 +7,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "deploy": "astro build && wrangler deploy",
+    "cf-preview": "astro build && wrangler dev",
     "check": "astro check",
     "lint": "eslint .",
     "quality": "pnpm run lint && pnpm run check && pnpm run test:run && pnpm run build",
@@ -39,6 +41,7 @@
     "eslint-plugin-astro": "^1.7.0",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.60.1",
-    "vitest": "^4.1.8"
+    "vitest": "^4.1.8",
+    "wrangler": "^4.100.0"
   }
 }
