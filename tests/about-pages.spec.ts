@@ -18,7 +18,7 @@ test('builds a zh About page through a shared layout with locale content', () =>
 
   expect(html).toContain('lang="zh"');
   expect(html).toContain('<title>关于 | Xiao Pan</title>');
-  expect(html).toContain('潘瀟');
+  expect(html).toContain('潘潇');
   // A frontmatter-driven section renders (Experience/Skills), not just the header.
   expect(html).toContain('SDLab');
   expect(html).toContain('RHCSA');
@@ -33,7 +33,8 @@ test('builds a zh Links page from translated content files', () => {
   const html = readFileSync(zhLinksPath, 'utf8');
 
   expect(html).toContain('<title>链接 | Xiao Pan</title>');
-  expect(html).toContain('这些是链接页面内容。');
+  // The shared friend-link set renders from the localized content file.
+  expect(html).toContain('https://www.tianlangz.top');
 });
 
 test('builds a zh Privacy page from translated content files', () => {
@@ -44,7 +45,8 @@ test('builds a zh Privacy page from translated content files', () => {
   const html = readFileSync(zhPrivacyPath, 'utf8');
 
   expect(html).toContain('<title>隐私 | Xiao Pan</title>');
-  expect(html).toContain('这是隐私页面内容。');
+  // A section from the localized privacy policy renders, not just the page chrome.
+  expect(html).toContain('收集哪些信息');
 });
 
 test('zh home page links to About and Links in the header and Privacy in the footer', () => {
