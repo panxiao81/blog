@@ -1,6 +1,6 @@
 ---
 title: 关于
-name: 潘瀟
+name: 潘潇
 role: 软件工程师 · 研究生
 location: 日本 · 奈良
 focus:

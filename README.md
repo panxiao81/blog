@@ -41,6 +41,7 @@ Then open the printed URL. The root (`/`) redirects to the reader's preferred or
 | `pnpm quality` | Lint + check + tests + build (the full gate) |
 | `pnpm new-post <slug>` | Scaffold a new post (see below) |
 | `pnpm import-posts` | Import posts from the legacy Hugo repo |
+| `pnpm translate-post <slug>` | Machine-translate a post into the other locales (see below) |
 | `pnpm deploy` | Build and deploy to Cloudflare |
 
 ## Writing posts
@@ -75,6 +76,38 @@ The supported locales are `en`, `zh`, and `ja` (`src/config/site.ts`), with `zh`
 
 UI strings ("Site Chrome") live in `src/i18n/dictionaries.ts`, one entry per locale.
 
+### Translating posts
+
+Machine-translate a source post into the other locales with an LLM (OpenAI SDK):
+
+```bash
+# OPENAI_API_KEY (and optional OPENAI_BASE_URL) are read from a gitignored .env
+pnpm translate-post understand-arp-in-new-way            # zh → en, ja
+pnpm translate-post my-slug --from en --to ja            # one source/target pair
+pnpm translate-post my-slug --dry-run                    # print, don't write
+```
+
+It reads `posts/<from>/<slug>.md`, translates the title, description, and body, and
+writes `posts/<locale>/<slug>.md` for each target. Translations are marked
+`autoTranslated: true` (the post page shows a machine-translation notice). Taxonomy
+terms, `date`, `draft`, and `license` are copied verbatim so linkage and the publish
+state stay consistent; co-located image paths are rewritten to point back at the
+source locale's assets (`../<from>/<slug>/…`). Existing target files are skipped
+unless you pass `--overwrite`.
+
+| Flag / env | Purpose |
+| --- | --- |
+| `--from <locale>` | Source locale (default `zh`) |
+| `--to <locales>` | Comma-separated targets (default: every other locale) |
+| `--model <model>` | OpenAI model (default `$OPENAI_MODEL` or `gpt-5.4-mini`) |
+| `--overwrite` | Replace existing target files |
+| `--dry-run` | Print the result instead of writing |
+| `OPENAI_API_KEY` | Required |
+| `OPENAI_BASE_URL` | Optional, for a compatible proxy/gateway |
+
+Review machine translations before publishing — proper nouns and code are preserved,
+but technical nuance should still get a human pass.
+
 ## Project structure
 
 ```
@@ -88,7 +121,7 @@ src/
   i18n/              Locale dictionaries (UI strings)
   layouts/           SiteShell (header, footer, theme, consent)
   pages/[locale]/    Locale-prefixed routes (index, archive, posts, taxonomy…)
-scripts/             new-post / import-posts helpers
+scripts/             new-post / import-posts / translate-post helpers
 tests/               Vitest specs + tests/fixtures/posts (fixed content set)
 ```
 
