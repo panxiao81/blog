@@ -5,6 +5,7 @@ import { adsensePostSlot, defaultLicenseUrl, siteUrl, utterancesRepo, type Local
 import AdUnit from '../../../components/AdUnit.astro';
 import {
   getAdjacentPosts,
+  getPostLocaleAlternates,
   getPostRouteEntries,
   getTaxonomyTermHref,
   type PostRouteEntry,
@@ -54,6 +55,7 @@ const hreflangAlternates = siteUrl
       .filter((p) => p.slug === slug)
       .map((p) => ({ locale: p.locale, url: `${siteUrl}/${p.locale}/posts/${p.slug}/` }))
   : undefined;
+const localeAlternates = await getPostLocaleAlternates(slug);
 ---
 
 <SiteShell
@@ -61,6 +63,7 @@ const hreflangAlternates = siteUrl
   pageTitle={post.data.title}
   description={post.data.description}
   hreflangAlternates={hreflangAlternates}
+  localeAlternates={localeAlternates}
   ogType="article"
 >
   <div class="lg:flex lg:gap-16 xl:gap-20">
