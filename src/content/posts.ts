@@ -124,6 +124,9 @@ export async function getTaxonomyTermLocaleAlternates(
   return alternates;
 }
 
+// Several helpers call this, so a single page render may hit it a few times.
+// That's fine: it only runs at build time, and Astro caches the underlying
+// getCollection, so the repeated work is a cheap map/filter over loaded posts.
 export async function getPostRouteEntries(): Promise<PostRouteEntry[]> {
   const posts = await getCollection('posts', (entry: PostEntry) => !entry.data.draft);
 
