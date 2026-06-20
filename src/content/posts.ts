@@ -88,6 +88,42 @@ export function getTaxonomyTermHref(locale: Locale, taxonomy: TaxonomyKey, term:
   return `/${locale}/${taxonomy}/${getTaxonomyTermParam(term)}/`;
 }
 
+// Map each Locale that has a version of this Post to its URL, so the language
+// switcher can jump straight to the translation instead of resetting to home.
+export async function getPostLocaleAlternates(
+  slug: string,
+): Promise<Partial<Record<Locale, string>>> {
+  const entries = await getPostRouteEntries();
+  const alternates: Partial<Record<Locale, string>> = {};
+
+  for (const entry of entries) {
+    if (entry.slug === slug) {
+      alternates[entry.locale] = `/${entry.locale}/posts/${entry.slug}/`;
+    }
+  }
+
+  return alternates;
+}
+
+// Map each Locale whose posts use this taxonomy term to that term's listing, so
+// the language switcher stays on the term instead of resetting to home. Always
+// points at the term's first page, since page numbers don't line up by Locale.
+export async function getTaxonomyTermLocaleAlternates(
+  taxonomy: TaxonomyKey,
+  term: string,
+): Promise<Partial<Record<Locale, string>>> {
+  const entries = await getTaxonomyRouteEntries(taxonomy);
+  const alternates: Partial<Record<Locale, string>> = {};
+
+  for (const entry of entries) {
+    if (entry.term === term) {
+      alternates[entry.locale] = `/${entry.locale}/${taxonomy}/${entry.param}/`;
+    }
+  }
+
+  return alternates;
+}
+
 export async function getPostRouteEntries(): Promise<PostRouteEntry[]> {
   const posts = await getCollection('posts', (entry: PostEntry) => !entry.data.draft);
 

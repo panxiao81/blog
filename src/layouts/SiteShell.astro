@@ -9,10 +9,30 @@ interface Props {
   pageTitle?: string;
   description?: string;
   hreflangAlternates?: Array<{ locale: string; url: string }>;
+  // Explicit per-Locale target for the language switcher. Provide this on routes
+  // whose content doesn't exist in every Locale (posts, taxonomy terms); a Locale
+  // absent from the map falls back to its home page. When omitted, the switcher
+  // keeps the current path and just swaps the Locale segment.
+  localeAlternates?: Partial<Record<Locale, string>>;
   ogType?: 'website' | 'article';
 }
 
-const { locale, pageTitle, description, hreflangAlternates, ogType = 'website' } = Astro.props;
+const { locale, pageTitle, description, hreflangAlternates, localeAlternates, ogType = 'website' } = Astro.props;
+
+// The path after the current Locale segment (e.g. "/posts/foo/"), reused to build
+// the same page in another Locale when no explicit alternate is given.
+const localePrefix = `/${locale}`;
+const localeSwitchPath = Astro.url.pathname.startsWith(localePrefix)
+  ? Astro.url.pathname.slice(localePrefix.length) || '/'
+  : '/';
+
+function localeSwitchHref(target: Locale): string {
+  if (localeAlternates) {
+    return localeAlternates[target] ?? `/${target}/`;
+  }
+
+  return `/${target}${localeSwitchPath}`;
+}
 const dictionary = dictionaries[locale];
 const title = pageTitle ? `${pageTitle} | ${siteConfig.title}` : siteConfig.title;
 const themeStorageKey = themePreferenceStorageKey;
@@ -100,7 +120,7 @@ const yearRange = currentYear > siteFoundingYear
                 {locales.map((l) =>
                   l === locale
                     ? <span aria-current="page" class="font-semibold text-zinc-900 dark:text-zinc-100">{localeLabels[l]}</span>
-                    : <a href={`/${l}/`} class="text-zinc-500 dark:text-zinc-400 underline-offset-4 hover:underline">{localeLabels[l]}</a>
+                    : <a href={localeSwitchHref(l)} class="text-zinc-500 dark:text-zinc-400 underline-offset-4 hover:underline">{localeLabels[l]}</a>
                 )}
               </nav>
               <nav aria-label="Theme" class="inline-flex items-center gap-1 rounded-full border border-zinc-200 p-1 text-sm dark:border-zinc-800">

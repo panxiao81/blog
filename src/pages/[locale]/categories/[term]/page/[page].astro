@@ -1,5 +1,5 @@
 ---
-import { getTaxonomyRouteEntries, getTaxonomyTermParam, type PostRouteEntry } from '../../../../../content/posts';
+import { getTaxonomyRouteEntries, getTaxonomyTermLocaleAlternates, getTaxonomyTermParam, type PostRouteEntry } from '../../../../../content/posts';
 import { adsenseListSlot, postsPerPage, type Locale } from '../../../../../config/site';
 import { dictionaries } from '../../../../../i18n/dictionaries';
 import SiteShell from '../../../../../layouts/SiteShell.astro';
@@ -40,9 +40,10 @@ const { locale, term, posts, currentPage, totalPages } = Astro.props as {
 const dictionary = dictionaries[locale];
 const heading = `${dictionary.categoryLabel}: ${term}`;
 const basePath = `/${locale}/categories/${getTaxonomyTermParam(term)}`;
+const localeAlternates = await getTaxonomyTermLocaleAlternates('categories', term);
 ---
 
-<SiteShell locale={locale} pageTitle={heading}>
+<SiteShell locale={locale} pageTitle={heading} localeAlternates={localeAlternates}>
   <section class="space-y-6">
     <h1 class="text-4xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50">{heading}</h1>
 
