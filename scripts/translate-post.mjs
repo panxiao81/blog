@@ -133,13 +133,13 @@ export function rewriteAssetPaths(body, fromLocale) {
     .replaceAll('src="./', `src="../${fromLocale}/`);
 }
 
+// Some OpenAI-compatible gateways drop the system role for non-OpenAI models
+// (e.g. Anthropic), so the instructions silently vanish. Folding them into the
+// single user message keeps the prompt intact across every model we target.
 async function translateText(client, model, instructions, text) {
   const completion = await client.chat.completions.create({
     model,
-    messages: [
-      { role: 'system', content: instructions },
-      { role: 'user', content: text },
-    ],
+    messages: [{ role: 'user', content: `${instructions}\n\n${text}` }],
   });
 
   const content = completion.choices[0]?.message?.content;
@@ -149,6 +149,19 @@ async function translateText(client, model, instructions, text) {
   }
 
   return content.trim();
+}
+
+// Pull the first balanced JSON object out of a model reply, tolerating code
+// fences or stray prose around it instead of demanding a strict JSON body.
+function extractJsonObject(content) {
+  const start = content.indexOf('{');
+  const end = content.lastIndexOf('}');
+
+  if (start === -1 || end === -1 || end < start) {
+    throw new Error(`Model response did not contain a JSON object: ${content.slice(0, 80)}`);
+  }
+
+  return JSON.parse(content.slice(start, end + 1));
 }
 
 async function translateMetadata(client, model, targetLanguage, tone, title, description) {
@@ -161,11 +174,7 @@ If a field is empty, return it as an empty string.`;
   const payload = JSON.stringify({ title, description: description ?? '' });
   const completion = await client.chat.completions.create({
     model,
-    response_format: { type: 'json_object' },
-    messages: [
-      { role: 'system', content: instructions },
-      { role: 'user', content: payload },
-    ],
+    messages: [{ role: 'user', content: `${instructions}\n\n${payload}` }],
   });
 
   const content = completion.choices[0]?.message?.content;
@@ -174,7 +183,7 @@ If a field is empty, return it as an empty string.`;
     throw new Error('Model returned an empty metadata response.');
   }
 
-  return JSON.parse(content);
+  return extractJsonObject(content);
 }
 
 async function translateBody(client, model, targetLanguage, tone, body) {
