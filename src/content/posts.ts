@@ -150,6 +150,15 @@ function getSourcePost(group: PostRouteEntry[]): PostRouteEntry {
   );
 }
 
+// Resolve the Source Post for a slug so a Translated Post can link back to the
+// original. Returns null when the slug has no entries, or only the version we
+// already render (no separate source to point at).
+export async function getSourcePostForSlug(slug: string): Promise<PostRouteEntry | null> {
+  const group = (await getPostRouteEntries()).filter((entry) => entry.slug === slug);
+
+  return group.length > 0 ? getSourcePost(group) : null;
+}
+
 export async function getLocalePostListItems(locale: Locale): Promise<LocalePostListItem[]> {
   const routeEntries = await getPostRouteEntries();
 
