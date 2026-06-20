@@ -33,6 +33,7 @@ export type SiteDictionary = {
   tocHeading: string;
   tocToggleLabel: string;
   translationNotice: string;
+  viewOriginal: string;
   newerPost: string;
   olderPost: string;
   prevPage: string;
@@ -81,6 +82,7 @@ export const dictionaries: Record<Locale, SiteDictionary> = {
     tocHeading: 'Contents',
     tocToggleLabel: 'Toggle table of contents',
     translationNotice: 'This post was automatically translated.',
+    viewOriginal: 'Read the original',
     newerPost: 'Newer',
     olderPost: 'Older',
     prevPage: 'Newer',
@@ -127,6 +129,7 @@ export const dictionaries: Record<Locale, SiteDictionary> = {
     tocHeading: '目录',
     tocToggleLabel: '切换目录',
     translationNotice: '本文由机器翻译生成。',
+    viewOriginal: '查看原文',
     newerPost: '更新',
     olderPost: '更早',
     prevPage: '更新',
@@ -173,6 +176,7 @@ export const dictionaries: Record<Locale, SiteDictionary> = {
     tocHeading: '目次',
     tocToggleLabel: '目次を切り替える',
     translationNotice: 'この記事は自動翻訳されています。',
+    viewOriginal: '原文を読む',
     newerPost: '新しい',
     olderPost: '古い',
     prevPage: '新しい',

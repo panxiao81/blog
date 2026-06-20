@@ -124,6 +124,9 @@ export async function getTaxonomyTermLocaleAlternates(
   return alternates;
 }
 
+// Several helpers call this, so a single page render may hit it a few times.
+// That's fine: it only runs at build time, and Astro caches the underlying
+// getCollection, so the repeated work is a cheap map/filter over loaded posts.
 export async function getPostRouteEntries(): Promise<PostRouteEntry[]> {
   const posts = await getCollection('posts', (entry: PostEntry) => !entry.data.draft);
 
@@ -148,6 +151,15 @@ function getSourcePost(group: PostRouteEntry[]): PostRouteEntry {
     group.find((entry) => entry.locale === defaultLocale) ??
     group[0]
   );
+}
+
+// Resolve the Source Post for a slug so a Translated Post can link back to the
+// original. Returns null when the slug has no entries, or only the version we
+// already render (no separate source to point at).
+export async function getSourcePostForSlug(slug: string): Promise<PostRouteEntry | null> {
+  const group = (await getPostRouteEntries()).filter((entry) => entry.slug === slug);
+
+  return group.length > 0 ? getSourcePost(group) : null;
 }
 
 export async function getLocalePostListItems(locale: Locale): Promise<LocalePostListItem[]> {

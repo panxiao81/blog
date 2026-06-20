@@ -1,12 +1,13 @@
 ---
 import { render } from 'astro:content';
 
-import { adsensePostSlot, defaultLicenseUrl, siteUrl, utterancesRepo, type Locale } from '../../../config/site';
+import { adsensePostSlot, defaultLicenseUrl, localeLabels, siteUrl, utterancesRepo, type Locale } from '../../../config/site';
 import AdUnit from '../../../components/AdUnit.astro';
 import {
   getAdjacentPosts,
   getPostLocaleAlternates,
   getPostRouteEntries,
+  getSourcePostForSlug,
   getTaxonomyTermHref,
   type PostRouteEntry,
 } from '../../../content/posts';
@@ -56,6 +57,12 @@ const hreflangAlternates = siteUrl
       .map((p) => ({ locale: p.locale, url: `${siteUrl}/${p.locale}/posts/${p.slug}/` }))
   : undefined;
 const localeAlternates = await getPostLocaleAlternates(slug);
+
+// For a machine-translated post, point readers back to the author-written
+// original. Skip the link when the source is this same version (e.g. a slug with
+// no separate source marked), since there is nothing else to link to.
+const original = post.data.autoTranslated ? await getSourcePostForSlug(slug) : null;
+const originalHref = original && original.locale !== locale ? `/${original.locale}/posts/${original.slug}/` : null;
 ---
 
 <SiteShell
@@ -112,6 +119,14 @@ const localeAlternates = await getPostLocaleAlternates(slug);
         {post.data.autoTranslated && (
           <p class="max-w-[68ch] rounded border border-amber-200 dark:border-amber-700 bg-amber-50 dark:bg-amber-950 px-3 py-2.5 text-sm leading-6 text-amber-800 dark:text-amber-300">
             {dictionary.translationNotice}
+            {original && originalHref && (
+              <>
+                {' '}
+                <a class="font-medium underline underline-offset-4 hover:no-underline" href={originalHref}>
+                  {dictionary.viewOriginal} ({localeLabels[original.locale]})
+                </a>
+              </>
+            )}
           </p>
         )}
 
