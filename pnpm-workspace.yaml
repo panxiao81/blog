@@ -5,3 +5,8 @@ allowBuilds:
 
 overrides:
   vite: ^8
+  # Render math with the same KaTeX version whose CSS the site imports.
+  rehype-katex>katex: ^0.19.1
+  micromark-extension-math>katex: ^0.19.1
+  # @tailwindcss/typography pins a vulnerable 6.0.10.
+  '@tailwindcss/typography>postcss-selector-parser': ^6.1.5
