@@ -36,10 +36,18 @@ updates:
           - "tailwindcss"
           - "@tailwindcss/*"
       # Everything else: batch minor/patch bumps; majors still get their own PR.
+      # Exclude the groups above explicitly so their packages never split off here.
       minor-and-patch:
         update-types:
           - "minor"
           - "patch"
+        exclude-patterns:
+          - "astro"
+          - "@astrojs/*"
+          - "typescript-eslint"
+          - "@typescript-eslint/*"
+          - "tailwindcss"
+          - "@tailwindcss/*"
 
   - package-ecosystem: "github-actions"
     directory: "/"
