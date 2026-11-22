@@ -24,7 +24,7 @@
     "@astrojs/sitemap": "^3.7.4",
     "astro": "^7.4.5",
     "katex": "^0.19.1",
-    "mermaid": "^12.2.0",
+    "mermaid": "^12.3.0",
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0",
     "sharp": "^0.35.5",
@@ -38,12 +38,12 @@
     "@types/node": "^26.6.6",
     "@typescript-eslint/eslint-plugin": "^8.72.1",
     "@typescript-eslint/parser": "^8.72.1",
-    "eslint": "^10.14.0",
+    "eslint": "^10.15.0",
     "eslint-plugin-astro": "^3.2.1",
-    "openai": "^7.47.0",
+    "openai": "^7.60.0",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.72.1",
-    "vitest": "^5.0.5",
-    "wrangler": "^4.156.0"
+    "vitest": "^5.1.1",
+    "wrangler": "^4.165.0"
   }
 }
